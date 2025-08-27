@@ -10,17 +10,19 @@ namespace NS
 {
     URLSessionConfiguration* URLSessionConfiguration::defaultSessionConfiguration()
     {
-        #if __OBJC__
+#if __OBJC__
         return (URLSessionConfiguration*)[NSURLSessionConfiguration defaultSessionConfiguration];
-        #endif // __OBJC__
+#else
         return nullptr;
+#endif // __OBJC__
     }
 
     URLSessionConfiguration* URLSessionConfiguration::ephemeralSessionConfiguration()
     {
-        #if __OBJC__
+#if __OBJC__
         return (URLSessionConfiguration*)[NSURLSessionConfiguration ephemeralSessionConfiguration];
-        #endif // __OBJC__
+#else
         return nullptr;
+#endif // __OBJC__
     }
 }
