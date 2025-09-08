@@ -4,6 +4,7 @@
 
 struct SScopeLock
 {
+public:
     CORE_API SScopeLock(const SCriticalSection& Section, bool bTryLock = false);
     CORE_API ~SScopeLock();
 

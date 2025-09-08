@@ -20,30 +20,30 @@ class CObjectCollector
 	using CProperty = Objects::Properties::CProperty;
 
 public:
-	CObjectCollector();
-    ~CObjectCollector();
+	CORE_API CObjectCollector();
+    CORE_API ~CObjectCollector();
     
-	SCollector* Collector() const;
-	void PushCollector(SCollector* Collector);
-	void PopCollector();
+	CORE_API SCollector* Collector() const;
+	CORE_API void PushCollector(SCollector* Collector);
+	CORE_API void PopCollector();
 	
-	CObjectLink* AddObjectLink(CObject* Obj, CProperty* Property);
-	void RemoveObjectLink(CObjectLink* Link);
+	CORE_API CObjectLink* AddObjectLink(CObject* Obj, CProperty* Property);
+	CORE_API void RemoveObjectLink(CObjectLink* Link);
 	
-	bool HasLinks(CObject* Obj) const;
-	TArray<CObjectLink*> LinksForObject(CObject* Obj) const;
+	CORE_API bool HasLinks(CObject* Obj) const;
+	CORE_API TArray<CObjectLink*> LinksForObject(CObject* Obj) const;
 	
-	void WatchObject(CObject* Obj);
-	void UnWatchObject(CObject* Obj);
+	CORE_API void WatchObject(CObject* Obj);
+	CORE_API void UnWatchObject(CObject* Obj);
 
-	void AddToRoot(CObject* Obj);
-	void RemoveFromRoot(CObject* Obj);
+	CORE_API void AddToRoot(CObject* Obj);
+	CORE_API void RemoveFromRoot(CObject* Obj);
 	
-	SizeT AliveObjectCount() const;
+	CORE_API SizeT AliveObjectCount() const;
 
-	void CollectGarbage();
+	CORE_API void CollectGarbage();
 
-	void SetQueuedForDestruction(CObject* Obj, bool bEnqueue);
+	CORE_API CORE_API void SetQueuedForDestruction(CObject* Obj, bool bEnqueue);
 	
 private:
 	SCriticalSection _objectsCriticalSection;
@@ -63,4 +63,4 @@ private:
 	void RecursivelyMarkObjects(CObject* InFirstObject, CObject* InCurrentObject, TArray<CObject*>& RefMarked);
 };
 
-extern CObjectCollector& GObjectCollector;
+CORE_API extern CObjectCollector& GObjectCollector;

@@ -7,6 +7,6 @@ class CObject;
 struct SCollectorScope : public SCollector
 {
 public:
-	SCollectorScope();
-	~SCollectorScope() override;
+	CORE_API SCollectorScope();
+	CORE_API ~SCollectorScope() override;
 };

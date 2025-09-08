@@ -14,10 +14,8 @@ class CWindowsThread : public CThread
     TSharedPtr<std::thread> Thread;
     bool bIsRunning = false;
 
-protected:
-    CORE_API CWindowsThread() = default;
-
 public:
+    CORE_API CWindowsThread() = default;
     CORE_API ~CWindowsThread() override = default;
 
     CORE_API void SetName(const CString& Name) override;

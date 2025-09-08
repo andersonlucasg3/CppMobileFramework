@@ -299,13 +299,13 @@ SizeT CString::Hash() const
 #if PLATFORM_WINDOWS
 CWString CString::WStr() const
 {
-    char* CStr = BufferPtr.Raw();
+    char* CStr = _bufferPtr.Raw();
 
-    wchar_t* NewBuffer = new wchar_t[Length + 1];
+    wchar_t* NewBuffer = new wchar_t[_length + 1];
 
     UInt64 Index = 0;
-    UInt64 Remaining = Length;
-    while (Index + Remaining < Length)
+    UInt64 Remaining = _length;
+    while (Index + Remaining < _length)
     {
         SizeT ConvertedSize = 0;
         wchar_t ConvertedChars[1024];
@@ -324,7 +324,7 @@ CWString CString::WStr() const
         }
     }
     
-    NewBuffer[Length] = L'\0';
+    NewBuffer[_length] = L'\0';
 
     return MakeShareable<wchar_t, SArrayDeleter<wchar_t>>(NewBuffer);
 }

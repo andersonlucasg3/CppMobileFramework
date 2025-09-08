@@ -17,11 +17,11 @@ public:
 	CORE_API CObject();
 	CORE_API virtual ~CObject();
 
-	bool IsRooted() const;
-	void MakeRooted();
-	void MakeUnrooted();
+	CORE_API bool IsRooted() const;
+	CORE_API void MakeRooted();
+	CORE_API void MakeUnrooted();
 
-	bool IsQueuedForDestruction() const;
+	CORE_API bool IsQueuedForDestruction() const;
 
 	template<typename TOther>
 	bool IsA()

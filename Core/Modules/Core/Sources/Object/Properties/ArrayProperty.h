@@ -18,14 +18,14 @@ namespace Objects::Properties
         using Super = CProperty;
 
     public:
-        CArrayProperty(CObject* InParent);
-        inline virtual ~CArrayProperty() override = default;
+        CORE_API CArrayProperty(CObject* InParent);
+        CORE_API virtual ~CArrayProperty() override = default;
 
     protected:
-        void ObjectAdded(CObject* InObject);
-        void ObjectRemoved(CObject* InObject);
+        CORE_API void ObjectAdded(CObject* InObject);
+        CORE_API void ObjectRemoved(CObject* InObject);
 
-        CObjectLink* LinkForObject(CObject* InObject) const;
+        CORE_API CObjectLink* LinkForObject(CObject* InObject) const;
 
     private:
         mutable TMap<CObject*, CObjectLink*> _objectLinkMap;
