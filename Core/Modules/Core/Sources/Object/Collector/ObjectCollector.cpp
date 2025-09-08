@@ -23,7 +23,14 @@ CObjectCollector::CObjectCollector()
 
 CObjectCollector::~CObjectCollector()
 {
-    // TODO: anything here?
+	// delete all pending objects
+	TArray<CObject*> RootedCopy = _rootedObjects;
+	for (CObject* Rooted : RootedCopy)
+	{
+		Rooted->MakeUnrooted();
+	}
+
+    CollectGarbage();
 }
 
 SCollector* CObjectCollector::Collector() const
@@ -82,7 +89,7 @@ CObjectLink* CObjectCollector::AddObjectLink(CObject* Obj, CProperty* Property)
 {
 	if (Obj == nullptr) return nullptr;
 	
-	SScopeLock Lock(_objectsCriticalSection);
+	SScopeLock Lock(_objectsCriticalSection, true);
 
 	if (Obj->IsQueuedForDestruction())
 	{
@@ -106,7 +113,7 @@ void CObjectCollector::RemoveObjectLink(CObjectLink* Link)
 {
 	if (Link == nullptr) return;
 
-	SScopeLock Lock(_objectsCriticalSection);
+	SScopeLock Lock(_objectsCriticalSection, true);
 	
 	CObject* Object = Link->Object();
 	
@@ -125,7 +132,7 @@ void CObjectCollector::RemoveObjectLink(CObjectLink* Link)
 
 bool CObjectCollector::HasLinks(CObject* Obj) const
 {
-	SScopeLock Lock(_objectsCriticalSection);
+	SScopeLock Lock(_objectsCriticalSection, true);
 
 	if (TArray<CObjectLink*>* LinksArray = _objectLinksMap.Find(Obj))
 	{
@@ -137,7 +144,7 @@ bool CObjectCollector::HasLinks(CObject* Obj) const
 
 void CObjectCollector::WatchObject(CObject *Obj)
 {
-	SScopeLock Lock(_objectsCriticalSection);
+	SScopeLock Lock(_objectsCriticalSection, true);
 
 	_globalObjects.Add(Obj);
 
@@ -151,7 +158,7 @@ void CObjectCollector::WatchObject(CObject *Obj)
 
 void CObjectCollector::UnWatchObject(CObject *Obj)
 {
-	SScopeLock Lock(_objectsCriticalSection);
+	SScopeLock Lock(_objectsCriticalSection, true);
 
 	_globalObjects.Remove(Obj);
 
@@ -165,7 +172,7 @@ void CObjectCollector::UnWatchObject(CObject *Obj)
 
 void CObjectCollector::AddToRoot(CObject* Obj)
 {
-	SScopeLock Lock(_objectsCriticalSection);
+	SScopeLock Lock(_objectsCriticalSection, true);
 
 	_rootedObjects.Add(Obj);
 
@@ -177,7 +184,7 @@ void CObjectCollector::AddToRoot(CObject* Obj)
 
 void CObjectCollector::RemoveFromRoot(CObject* Obj)
 {
-	SScopeLock Lock(_objectsCriticalSection);
+	SScopeLock Lock(_objectsCriticalSection, true);
 
 	_rootedObjects.Remove(Obj);
 
@@ -189,20 +196,20 @@ void CObjectCollector::RemoveFromRoot(CObject* Obj)
 
 SizeT CObjectCollector::AliveObjectCount() const
 {
-	SScopeLock Lock(_objectsCriticalSection);
+	SScopeLock Lock(_objectsCriticalSection, true);
 
 	return _globalObjects.Num();
 }
 
 void CObjectCollector::CollectGarbage()
 {
-	SScopeLock ObjectsLock(_objectsCriticalSection);
+	SScopeLock ObjectsLock(_objectsCriticalSection, true);
 
-	TArray<CObject*> Marked;
-
+	static TArray<CObject*> Marked;
+	
 	for (CObject* Object : _rootedObjects)
 	{
-		RecursivelyMarkObjects(Object, Marked);
+		RecursivelyMarkObjects(Object, Object, Marked);
 	}
 
 	for (CObject* Object : _globalObjects)
@@ -216,6 +223,8 @@ void CObjectCollector::CollectGarbage()
 	}
 
 	DestroyQueued();
+
+	Marked.RemoveAll(false);
 }
 
 void CObjectCollector::SetQueuedForDestruction(CObject* Obj, bool bEnqueue)
@@ -224,7 +233,7 @@ void CObjectCollector::SetQueuedForDestruction(CObject* Obj, bool bEnqueue)
 
 	if (bEnqueue)
 	{
-		_destructionQueue.Add(Obj);
+		_destructionQueue.Insert(Obj);
 	}
 	else
 	{
@@ -246,6 +255,17 @@ void CObjectCollector::DestroyQueued()
 
 void CObjectCollector::DestroyObject(CObject* Obj)
 {
+	SScopeLock ObjectsLock(_objectsCriticalSection, true);
+
+	if (TArray<CObjectLink*>* LinksPtr = _objectLinksMap.Find(Obj))
+	{
+		TArray<CObjectLink*> LinksCopy = *LinksPtr;
+		for (CObjectLink* Link : LinksCopy)
+		{
+			Link->Property()->ReleaseLinks();
+		}
+	}
+
 	for (CProperty* Property : Obj->_properties)
 	{
 		Property->ReleaseLinks();
@@ -261,16 +281,21 @@ void CObjectCollector::DestroyObject(CObject* Obj)
 	delete Obj;
 }
 
-void CObjectCollector::RecursivelyMarkObjects(CObject* InRootObject, TArray<CObject*>& RefMarked)
+void CObjectCollector::RecursivelyMarkObjects(CObject* InFirstObject, CObject* InCurrentObject, TArray<CObject*>& RefMarked)
 {
-	static auto LinkFunction = [this, &RefMarked](CObjectLink* Link)
+	TFunction<void(CObjectLink*)> LinkFunction = [this, InFirstObject, &RefMarked](CObjectLink* Link)
 	{
-		this->RecursivelyMarkObjects(Link->Object(), RefMarked);
+		if (InFirstObject == Link->Object())
+		{
+			return;
+		}
+
+		this->RecursivelyMarkObjects(InFirstObject, Link->Object(), RefMarked);
 	};
 
-	RefMarked.Add(InRootObject);
+	RefMarked.Add(InCurrentObject);
 
-	for (CProperty* Property : InRootObject->_properties)
+	for (CProperty* Property : InCurrentObject->_properties)
 	{
 		Property->EnumerateLinks(LinkFunction);
 	}

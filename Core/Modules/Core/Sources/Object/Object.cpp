@@ -36,8 +36,6 @@ void CObject::MakeUnrooted()
     _bIsRooted = false;
 
     GObjectCollector.RemoveFromRoot(this);
-
-    
 }
 
 bool CObject::IsQueuedForDestruction() const

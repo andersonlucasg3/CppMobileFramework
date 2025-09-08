@@ -1,12 +1,23 @@
 #include "ScopeLock.h"
 
-SScopeLock::SScopeLock(const SCriticalSection& Section) 
+SScopeLock::SScopeLock(const SCriticalSection& Section, bool bTryLock)
 :   _section(Section)
 {
-    _section.Lock();
+    if (bTryLock)
+    {
+        _bLocked = _section.TryLock();
+    }
+    else
+    {
+        _section.Lock();
+        _bLocked = true;
+    }
 }
 
 SScopeLock::~SScopeLock()
 {
-    _section.Unlock();
+    if (_bLocked)
+    {
+        _section.Unlock();
+    }
 }

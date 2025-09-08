@@ -1,8 +1,10 @@
 #pragma once
 
-#include "Templates/SharedPointers.h"
 #include "Templates/Array.h"
 
+#include "SmartPointer/SharedPointer.h"
+
+// TODO: use TMap logic without the value to make this Set fast
 template<typename TElement>
 class TSet
 {

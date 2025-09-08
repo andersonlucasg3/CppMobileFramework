@@ -2,7 +2,6 @@
 
 #include "Assert.h"
 
-#include "Logger/Logger.h"
 #include "Object/Object.h"
 #include "Object/Collector/CollectorScope.h"
 #include "Object/Collector/ObjectCollector.h"
@@ -24,15 +23,22 @@ class CRootedTestObject : public CObject
 public:
     PROPERTY(CMyTestObject, MyTestObject);
 
-    CRootedTestObject() : CObject()
-    {
-        MakeRooted();
-    }
+    CRootedTestObject() = default;
+    ~CRootedTestObject() override = default;
 };
 
-void CObjectCollectorTests::TestCase()
+class CProxyTestObject : public CObject
+{
+public:
+    PROPERTY(CRootedTestObject, RootedObject);
+
+    CProxyTestObject() = default;
+};
+
+static void BasicGCTests(CAssert* Assert)
 {
     CRootedTestObject* RootedObject = new CRootedTestObject;
+    RootedObject->MakeRooted();
 
     new CObject;
 
@@ -59,4 +65,49 @@ void CObjectCollectorTests::TestCase()
     RootedObject->MakeUnrooted();
 
     GObjectCollector.CollectGarbage();
+
+    ASSERT_EQUAL(GObjectCollector.AliveObjectCount(), 0);
+}
+
+static void TestCyclicCollect(CAssert* Assert)
+{
+    CRootedTestObject* RootedObject = new CRootedTestObject;
+    RootedObject->MakeRooted();
+
+    CMyTestObject* MyTestObject = new CMyTestObject;
+
+    CProxyTestObject* ProxyObject = new CProxyTestObject;
+
+    RootedObject->MyTestObject = MyTestObject;
+
+    MyTestObject->Object1 = ProxyObject;
+    MyTestObject->ObjectArray1.Add(ProxyObject);
+
+    ProxyObject->RootedObject = RootedObject;
+
+    ASSERT_EQUAL(GObjectCollector.AliveObjectCount(), 3);
+
+    GObjectCollector.CollectGarbage();
+
+    ASSERT_EQUAL(GObjectCollector.AliveObjectCount(), 3);
+
+    RootedObject->MakeUnrooted();
+
+    GObjectCollector.CollectGarbage();
+
+    ASSERT_EQUAL(GObjectCollector.AliveObjectCount(), 0);
+
+    (new CRootedTestObject())->MakeRooted();
+    (new CRootedTestObject())->MakeRooted();
+    (new CRootedTestObject())->MakeRooted();
+
+    ASSERT_EQUAL(GObjectCollector.AliveObjectCount(), 3);
+
+    // Will be deallocated on GC destructor
+}
+
+void CObjectCollectorTests::TestCase()
+{
+    BasicGCTests(Assert);
+    TestCyclicCollect(Assert);
 }

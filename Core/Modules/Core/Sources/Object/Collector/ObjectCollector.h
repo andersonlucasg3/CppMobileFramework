@@ -1,12 +1,14 @@
 #pragma once
 
+#include "Templates/Set.h"
 #include "Templates/Map.h"
 
 #include "Threading/CriticalSection.h"
 
 class CObject;
-class SCollector;
 class CObjectLink;
+
+struct SCollector;
 
 namespace Objects::Properties
 {
@@ -50,15 +52,15 @@ private:
 	mutable TMap<CObject*, TArray<CObjectLink*>> _objectLinksMap;
 
 	SCriticalSection _destructionQueueCriticalSection;
-	TArray<CObject*> _destructionQueue;
+	TSet<CObject*> _destructionQueue;
 	
 	SCriticalSection _collectorCriticalSection;
-	class SCollector* _currentCollector;
+	SCollector* _currentCollector;
 
 	void DestroyQueued();
 	void DestroyObject(CObject* Obj);
 
-	void RecursivelyMarkObjects(CObject* InRootObject, TArray<CObject*>& RefMarked);
+	void RecursivelyMarkObjects(CObject* InFirstObject, CObject* InCurrentObject, TArray<CObject*>& RefMarked);
 };
 
 extern CObjectCollector& GObjectCollector;

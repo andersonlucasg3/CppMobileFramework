@@ -1,0 +1,1 @@
+./ProjectTools/Scripts/Compile.ps1
