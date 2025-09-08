@@ -38,8 +38,14 @@ class TMap
     template<typename THashableKey, std::enable_if_t<std::is_integral_v<THashableKey> || std::is_enum_v<THashableKey>, bool> = true>
     SizeT Hash(const THashableKey& Key) 
 	{
-        return static_cast<SizeT>(Key) % _buckets.Num();
+		return static_cast<SizeT>(Key) % _buckets.Num();
     }
+
+	template<typename THashableKey, std::enable_if_t<std::is_pointer_v<THashableKey>, bool> = true>
+	SizeT Hash(THashableKey Key)
+	{
+		return reinterpret_cast<SizeT>(Key) % _buckets.Num();
+	}
 
     template<typename THashableKey, std::enable_if_t<std::is_base_of_v<CHashable, THashableKey>, bool> = true>
     SizeT Hash(const THashableKey& Key) 

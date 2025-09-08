@@ -1,9 +1,9 @@
 #include "ScopeLock.h"
 
-SScopeLock::SScopeLock(SCriticalSection& Section) 
+SScopeLock::SScopeLock(const SCriticalSection& Section) 
 :   _section(Section)
 {
-    Section.Lock();
+    _section.Lock();
 }
 
 SScopeLock::~SScopeLock()

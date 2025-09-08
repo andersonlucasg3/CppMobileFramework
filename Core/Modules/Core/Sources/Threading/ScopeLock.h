@@ -4,9 +4,9 @@
 
 struct SScopeLock
 {
-    CORE_API SScopeLock(SCriticalSection& Section);
+    CORE_API SScopeLock(const SCriticalSection& Section);
     CORE_API ~SScopeLock();
 
 private:
-    SCriticalSection& _section;
+    const SCriticalSection& _section;
 };

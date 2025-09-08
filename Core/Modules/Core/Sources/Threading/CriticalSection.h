@@ -7,10 +7,10 @@ struct SCriticalSection
     CORE_API SCriticalSection() = default;
     CORE_API virtual ~SCriticalSection() = default;
 
-    CORE_API virtual void Lock();
-    CORE_API virtual bool TryLock();
-    CORE_API virtual void Unlock();
+    CORE_API virtual void Lock() const;
+    CORE_API virtual bool TryLock() const;
+    CORE_API virtual void Unlock() const;
 
 private:
-    std::mutex _mutex;
+    mutable std::mutex _mutex;
 };

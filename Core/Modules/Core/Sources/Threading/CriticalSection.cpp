@@ -1,16 +1,16 @@
 #include "CriticalSection.h"
 
-void SCriticalSection::Lock()
+void SCriticalSection::Lock() const
 {
     _mutex.lock();
 }
 
-bool SCriticalSection::TryLock()
+bool SCriticalSection::TryLock() const
 {
     return _mutex.try_lock();
 }
 
-void SCriticalSection::Unlock()
+void SCriticalSection::Unlock() const
 {
     _mutex.unlock();
 }

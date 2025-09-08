@@ -49,7 +49,9 @@ class TArray
 
 	void DecreaseArray(bool bKeepArraySize)
 	{
-		if (!bKeepArraySize && (ArraySize - ItemNum > 4))
+		if (bKeepArraySize) return;
+
+		if (ArraySize - ItemNum > 4)
 		{
 			Resize(ItemNum + 4);
 		}
@@ -167,7 +169,7 @@ public:
 		}
 	}
 
-	bool Remove(const TElement& Element)
+	bool Remove(const TElement& Element, bool bKeepArraySize = true)
 	{
 		int32_t IndexToRemove = -1;
 		for (UInt32 CurrentIndex = 0; CurrentIndex < ItemNum; CurrentIndex++)
@@ -183,7 +185,7 @@ public:
 
 		if (IndexToRemove != -1)
 		{
-			RemoveAt(IndexToRemove);
+			RemoveAt(IndexToRemove, bKeepArraySize);
 
 			return true;
 		}
