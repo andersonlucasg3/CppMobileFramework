@@ -1,6 +1,10 @@
 #pragma once
 
+#include "Defines/Types.h"
+
 #include <mutex>
+
+using namespace Core::Types;
 
 struct SSemaphore
 {
@@ -8,7 +12,7 @@ struct SSemaphore
     CORE_API ~SSemaphore();
 
     CORE_API void NotifyOne();
-    CORE_API void Wait();
+    CORE_API void Wait(Int64 InTimeoutMillis = -1);
 
 private:
     std::mutex Mutex;

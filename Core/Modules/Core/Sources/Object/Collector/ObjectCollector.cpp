@@ -1,16 +1,22 @@
 #include "ObjectCollector.h"
 
+#include "Defines/Types.h"
+
+#include "Templates/Map.h"
 #include "Templates/Array.h"
+#include "Templates/Functions.h"
+
+#include "Threading/Thread.h"
+#include "Threading/ScopeLock.h"
 
 #include "Collector.h"
 #include "ObjectLink.h"
 
 #include "Object/Object.h"
-#include "Object/Properties/Property.h"
-#include "Threading/ScopeLock.h"
-#include <stdexcept>
+#include "Object/Collector/Referencer.h"
+#include "Object/Collector/ObjectCollectedListenerHandle.h"
 
-using namespace Objects::Properties;
+#include <stdexcept>
 
 static CObjectCollector ObjectCollector;
 CObjectCollector& GObjectCollector = ObjectCollector;
@@ -30,7 +36,41 @@ CObjectCollector::~CObjectCollector()
 		Rooted->MakeUnrooted();
 	}
 
-    CollectGarbage();
+	if (_bHasStartedCollecting)
+	{
+		_bHasStartedCollecting = false; // kills the thread
+		_collectGarbageSemaphore.NotifyOne(); // release the semaphore
+		_garbageCollectorThread->Join(); // wait the thread to finish
+	}
+
+	CollectGarbage(); // collect last garbage
+}
+
+void CObjectCollector::StartCollecting(UInt64 IntervalInMillis)
+{
+	if (_bHasStartedCollecting.CompareExchange(true)) return;
+
+	_garbageCollectorThread = CThread::Create();
+	_garbageCollectorThread->MakeRooted();
+
+	_garbageCollectorThread->Start([this, IntervalInMillis](CThread* Thread)
+	{
+		while (_bHasStartedCollecting)
+		{
+			_collectGarbageSemaphore.Wait(IntervalInMillis);
+
+			if (!_bHasStartedCollecting) return; // avoid the last GC here
+
+			CollectGarbage();
+
+			Thread->Sleep(100);
+		}
+	});
+}
+
+bool CObjectCollector::HasStartedCollecting() const
+{
+	return _bHasStartedCollecting;
 }
 
 SCollector* CObjectCollector::Collector() const
@@ -85,7 +125,7 @@ void CObjectCollector::PopCollector()
 	DestroyQueued();	
 }
 
-CObjectLink* CObjectCollector::AddObjectLink(CObject* Obj, CProperty* Property)
+CObjectLink* CObjectCollector::AddObjectLink(CObject* Obj, CReferencer* Referencer)
 {
 	if (Obj == nullptr) return nullptr;
 	
@@ -96,12 +136,12 @@ CObjectLink* CObjectCollector::AddObjectLink(CObject* Obj, CProperty* Property)
 		Obj->SetQueuedForDestruction(false);
 	}
 	
-	CObjectLink* Link = new CObjectLink(Property, Obj);
+	CObjectLink* Link = new CObjectLink(Referencer, Obj);
 	
 	TArray<CObjectLink*>* LinksArray = _objectLinksMap.Find(Obj);
 	if (LinksArray == nullptr)
 	{
-		LinksArray = &_objectLinksMap.Add(Obj, TArray<CObjectLink*>());
+		LinksArray = &_objectLinksMap.Add(Obj, TArray<CObjectLink*>()).Value;
 	}
 
 	LinksArray->Add(Link);
@@ -128,6 +168,39 @@ void CObjectCollector::RemoveObjectLink(CObjectLink* Link)
 	{
 		Object->SetQueuedForDestruction(true);
 	}
+}
+
+const SObjectCollectedListenerHandle& CObjectCollector::AddOnObjectCollectedListener(CObject* Object, const TFunction<void()>& OnCollected)
+{
+	static SObjectCollectedListenerHandle Invalid;
+	if (Object == nullptr) return Invalid;
+	
+	SScopeLock Lock(_listenersCriticalSection);
+
+	static UInt64 CurrentHandle = 0;
+
+	TMap<SObjectCollectedListenerHandle, TFunction<void()>>* Listeners = _collectedListeners.Find(Object);
+	if (Listeners == nullptr)
+	{
+		Listeners = &_collectedListeners.Add(Object, TMap<SObjectCollectedListenerHandle, TFunction<void()>>()).Value;
+	}
+
+	SObjectCollectedListenerHandle Handle = CurrentHandle++;
+	return Listeners->Add(Handle, OnCollected).Key;
+}
+
+void CObjectCollector::RemoveOnObjectCollectedListener(CObject* Object, SObjectCollectedListenerHandle& Handle)
+{
+	if (Object == nullptr || !Handle.IsValid()) return;
+
+	SScopeLock Lock(_listenersCriticalSection);
+
+	if (TMap<SObjectCollectedListenerHandle, TFunction<void()>>* Listeners = _collectedListeners.Find(Object))
+	{
+		Listeners->Remove(Handle);
+	}
+
+	Handle.Invalidate();
 }
 
 bool CObjectCollector::HasLinks(CObject* Obj) const
@@ -201,8 +274,38 @@ SizeT CObjectCollector::AliveObjectCount() const
 	return _globalObjects.Num();
 }
 
+void CObjectCollector::SetQueuedForDestruction(CObject* Obj, bool bEnqueue)
+{
+	SScopeLock Lock(_destructionQueueCriticalSection);
+
+	if (bEnqueue)
+	{
+		_destructionQueue.Insert(Obj);
+	}
+	else
+	{
+		_destructionQueue.Remove(Obj);
+	}
+}
+
+void CObjectCollector::ForceCollectGarbage()
+{
+	if (_bIsGarbageCollecting) return;
+
+	if (_bHasStartedCollecting)
+	{
+		_collectGarbageSemaphore.NotifyOne();
+	}
+	else
+	{
+		CollectGarbage(); // no thread call directly
+	}
+}
+
 void CObjectCollector::CollectGarbage()
 {
+	if (_bIsGarbageCollecting.CompareExchange(true)) return;
+
 	SScopeLock ObjectsLock(_objectsCriticalSection, true);
 
 	static TArray<CObject*> Marked;
@@ -225,20 +328,8 @@ void CObjectCollector::CollectGarbage()
 	DestroyQueued();
 
 	Marked.RemoveAll(false);
-}
 
-void CObjectCollector::SetQueuedForDestruction(CObject* Obj, bool bEnqueue)
-{
-	SScopeLock Lock(_destructionQueueCriticalSection);
-
-	if (bEnqueue)
-	{
-		_destructionQueue.Insert(Obj);
-	}
-	else
-	{
-		_destructionQueue.Remove(Obj);
-	}
+	_bIsGarbageCollecting = false;
 }
 
 void CObjectCollector::DestroyQueued()
@@ -262,13 +353,13 @@ void CObjectCollector::DestroyObject(CObject* Obj)
 		TArray<CObjectLink*> LinksCopy = *LinksPtr;
 		for (CObjectLink* Link : LinksCopy)
 		{
-			Link->Property()->ReleaseLinks();
+			Link->Referencer()->ReleaseLinks();
 		}
 	}
 
-	for (CProperty* Property : Obj->_properties)
+	for (CReferencer* Referencer : Obj->_referencers)
 	{
-		Property->ReleaseLinks();
+		Referencer->ReleaseLinks();
 	}
 
 	// do some index logic to fast removal
@@ -277,6 +368,18 @@ void CObjectCollector::DestroyObject(CObject* Obj)
 	_objectLinksMap.RemoveAndCopyValue(Obj, Links);
 
 	if (Links.Num() > 0) throw new std::runtime_error("should not have any live links");
+
+	{
+		SScopeLock Lock(_listenersCriticalSection);
+		TMap<SObjectCollectedListenerHandle, TFunction<void()>> Listeners;
+		if (_collectedListeners.RemoveAndCopyValue(Obj, Listeners))
+		{
+			Listeners.ForEach([](const TKeyValuePair<SObjectCollectedListenerHandle, TFunction<void()>>& Pair)
+			{
+				Pair.Value();
+			});
+		}
+	}
 
 	delete Obj;
 }
@@ -295,8 +398,8 @@ void CObjectCollector::RecursivelyMarkObjects(CObject* InFirstObject, CObject* I
 
 	RefMarked.Add(InCurrentObject);
 
-	for (CProperty* Property : InCurrentObject->_properties)
+	for (CReferencer* Referencer : InCurrentObject->_referencers)
 	{
-		Property->EnumerateLinks(LinkFunction);
+		Referencer->EnumerateLinks(LinkFunction);
 	}
 }

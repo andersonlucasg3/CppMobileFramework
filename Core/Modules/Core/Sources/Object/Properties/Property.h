@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Object/Collector/Referencer.h"
 #include "Templates/Functions.h"
 
 #include "Threading/CriticalSection.h"
@@ -14,30 +15,12 @@ class CObjectLink;
 
 namespace Objects::Properties
 {
-	class CProperty
-	{
-	public:
-		CORE_API explicit CProperty(CObject* InParent);
-		CORE_API virtual ~CProperty();
-		
-		CORE_API CObject* Parent() const;
-		
-	protected:
-		CORE_API virtual void ReleaseLinks() = 0;
-		CORE_API virtual void EnumerateLinks(const TFunction<void(CObjectLink*)>& InFunc) const = 0;
-
-	private:
-		CObject* _parent;
-		
-		friend class ::CObjectCollector;
-	};
-
 	template<typename TObject = CObject>
-	class TProperty : public CProperty
+	class TProperty : public CReferencer
 	{
 		static_assert(std::is_base_of_v<CObject, TObject>);
 
-		using Super = CProperty;
+		using Super = CReferencer;
 
 	public:
 		TProperty(CObject* InParent)
@@ -81,20 +64,10 @@ namespace Objects::Properties
 		{
 			SScopeLock Lock(_criticalSection);
 
-			if (_object != nullptr && _link != nullptr)
-			{
-				GObjectCollector.RemoveObjectLink(_link);
+			GObjectCollector.RemoveObjectLink(_link);
 
-				_object = nullptr;
-				_link = nullptr;
-			}
-
-			if (InObject != nullptr)
-			{
-				_object = InObject;
-
-				_link = GObjectCollector.AddObjectLink(InObject, this);
-			}
+			_object = InObject;
+			_link = GObjectCollector.AddObjectLink(InObject, this);
 		}
 
 		inline TObject* Object() const

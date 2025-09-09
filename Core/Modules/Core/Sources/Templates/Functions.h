@@ -1,15 +1,15 @@
 #pragma once
 
-#include <memory>
+#include <algorithm>
 
 template<
     typename TReturn,
     typename ... TArgs
 >
-class ICallableBase
+class CCallableBase
 {
 public:
-    virtual ~ICallableBase() = default;
+    virtual ~CCallableBase() = default;
     virtual TReturn Invoke(TArgs ... Arguments) const = 0;
 };
 
@@ -18,7 +18,7 @@ template<
     typename TReturn,
     typename ... TArgs
 >
-class TCallableStorage : public ICallableBase<TReturn, TArgs...>
+class TCallableStorage : public CCallableBase<TReturn, TArgs...>
 {
     TCallable Callable;
 
@@ -57,7 +57,7 @@ class TFunction<TReturn(TArgs...)>
 {
     using TFunc = TReturn(TArgs&...);
 
-    TSharedPtr<ICallableBase<TReturn, TArgs...>> CallableStorage;
+    TSharedPtr<CCallableBase<TReturn, TArgs...>> CallableStorage;
 
 public:
     TFunction(TFunc Func) :
@@ -105,7 +105,7 @@ class TFunction<void(TArgs...)>
 {
     using TFunc = void(TArgs&...);
 
-    TSharedPtr<ICallableBase<void, TArgs...>> CallableStorage;
+    TSharedPtr<CCallableBase<void, TArgs...>> CallableStorage;
 
 public:
     TFunction() : CallableStorage(nullptr)

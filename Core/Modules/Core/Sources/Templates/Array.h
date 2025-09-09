@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Defines/Types.h"
 #include "Templates/Functions.h"
 
 #include "SmartPointer/MakeAndCasts.h"
@@ -35,7 +36,7 @@ class TArray
 	SizeT ItemNum;
 	SizeT ArraySize;
 	
-	TElement& SetAt(const UInt64& Index, const TElement& Item)
+	TElement& SetAt(UInt64 Index, const TElement& Item)
 	{
 		TElement& Element = *(DataPtr + Index);
 
@@ -78,7 +79,7 @@ public:
 
 		for (UInt32 Index = 0; Index < Other.ItemNum; ++Index)
 		{
-			DataPtr[Index] = Other.DataPtr[Index];
+			SetAt(Index, Other.DataPtr[Index]);
 		}
 	}
 
@@ -102,7 +103,10 @@ public:
 		ItemNum(Size),
 		ArraySize(Size)
 	{
-		GMemory.Copy(Data, DataPtr.Raw(), sizeof(TElement) * ItemNum);
+		for (UInt32 Index = 0; Index < Size; ++Index)
+		{
+			SetAt(Index, Data[Index]);
+		}
 	}
 
 	// initializer lists constructor
@@ -114,7 +118,7 @@ public:
 
 		for (UInt32 Index = 0; Index < ItemNum; ++Index)
 		{
-			DataPtr[Index] = InitList.begin()[Index];
+			SetAt(Index, InitList.begin()[Index]);
 		}
 	}
 
@@ -140,7 +144,11 @@ public:
 			IncreaseArray(InElements.Num() + 4);
 		}
 
-		GMemory.Copy(InElements.GetData(), DataPtr.Raw() + ItemNum, InElements.Num());
+		for (UInt64 Index = ItemNum; Index < ItemNum + InElements.ItemNum; ++Index)
+		{
+			SetAt(Index, InElements[Index - ItemNum]);
+		}
+
 		ItemNum += InElements.ItemNum;
 	}
 
@@ -285,12 +293,12 @@ public:
 
 	TElement& First()
 	{
-		return *DataPtr.Get();
+		return DataPtr[0];
 	}
 
 	const TElement& First() const
 	{
-		return *DataPtr.Get();
+		return DataPtr[0];
 	}
 
 	void Resize(SizeT NewSize, bool bApplyNewSizeToItemNum = false)
@@ -310,7 +318,7 @@ public:
 			// must use assign so copy operators will be used
 			for (SizeT Index = 0; Index < ItemNum; ++Index)
 			{
-				NewDataPtr.Raw()[Index] = DataPtr.Raw()[Index];
+				NewDataPtr[Index] = DataPtr[Index];
 			}
 
 			DataPtr = NewDataPtr;
@@ -329,7 +337,7 @@ public:
 		TArray<TCast> Casted(ItemNum, true);
 		for (UInt32 Index = 0; Index < ItemNum; ++Index)
 		{
-			Casted[Index] = CastFunc(DataPtr.Get()[Index]);
+			Casted.SetAt(Index, CastFunc(DataPtr[Index]));
 		}
 		return Casted;
 	}
@@ -338,7 +346,10 @@ public:
 	TArray<TCast> Cast() const
 	{
 		TArray<TCast> Casted(ItemNum * sizeof(TElement), true);
-		GMemory.Copy(GetData(), Casted.GetData(), Casted.Num());
+		for (UInt32 Index = 0; Index < ItemNum; ++Index)
+		{
+			Casted.SetAt(Index, DataPtr[Index]);
+		}
 		return Casted;
 	}
 
@@ -354,7 +365,7 @@ public:
 	{
 		for (UInt32 Index = 0; Index < ItemNum; ++Index)
 		{
-			EachFunc(DataPtr.Get()[Index]);
+			EachFunc(DataPtr[Index]);
 		}
 	}
 
@@ -393,7 +404,10 @@ public:
 		ItemNum = Other.ItemNum;
 		ArraySize = Other.ItemNum;
 
-		GMemory.Copy(Other.GetData(), GetData(), ItemNum * sizeof(TElement));
+		for (UInt64 Index = 0; Index < ItemNum; ++Index) 
+		{
+			SetAt(Index, Other.DataPtr[Index]);
+		}
 
 		return *this;
 	}

@@ -1,11 +1,11 @@
 #include "ObjectLink.h"
 
-#include "Object/Properties/Property.h"
+#include "Referencer.h"
 
-CObjectLink::CObjectLink(CProperty* InProperty, CObject* InObject)
+CObjectLink::CObjectLink(CReferencer* InReferencer, CObject* InObject)
 :	_object(InObject)
-,	_parent(InProperty->Parent())
-,	_property(InProperty)
+,	_parent(InReferencer->Parent())
+,	_referencer(InReferencer)
 {
 	
 }
@@ -20,7 +20,7 @@ CObject* CObjectLink::Parent() const
 	return _parent;
 }
 
-Objects::Properties::CProperty* CObjectLink::Property() const
+CReferencer* CObjectLink::Referencer() const
 {
-	return _property;
+	return _referencer;
 }

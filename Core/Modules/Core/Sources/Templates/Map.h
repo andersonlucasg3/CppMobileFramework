@@ -81,12 +81,12 @@ public:
 
 	~TMap() = default;
 
-    TValue& Add(const TKey& Key, const TValue& Value)
+    TKeyValuePair& Add(const TKey& Key, const TValue& Value)
     {
 		return Add(TKeyValuePair{ Key, Value });
     }
 
-	TValue& Add(const TKeyValuePair& Pair)
+	TKeyValuePair& Add(const TKeyValuePair& Pair)
 	{
 		ResizeIfNeeded();
 
@@ -100,7 +100,7 @@ public:
 		}
 
 		_size++;
-		return Bucket.Add(Pair)->Value.Value;
+		return Bucket.Add(Pair)->Value;
 	}
 
 	TValue& Set(const TKey& Key, const TValue& Value)

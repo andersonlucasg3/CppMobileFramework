@@ -8,23 +8,23 @@
 
 bool CThread::IsRunning()
 {
-    SScopeLock Lock(IsRunningSection);
-    return bIsRunning;
+    SScopeLock Lock(_isRunningSection);
+    return _bIsRunning;
 }
 
-void CThread::Start(const TFunction<void (const CThreadWeakPtr &)>&)
+void CThread::Start(const TFunction<void(CThread*)>&)
 {
-    SScopeLock Lock(IsRunningSection);
-    bIsRunning = true;
+    SScopeLock Lock(_isRunningSection);
+    _bIsRunning = true;
 }
 
 void CThread::Exit()
 {
-    SScopeLock Lock(IsRunningSection);
-    bIsRunning = false;
+    SScopeLock Lock(_isRunningSection);
+    _bIsRunning = false;
 }
 
-CThreadPtr CThread::Create()
+CThread* CThread::Create()
 {
-    return MakeShared<CPlatformThread>();
+    return new CPlatformThread();
 }

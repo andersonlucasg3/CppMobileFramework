@@ -1,26 +1,20 @@
 #pragma once
 
 class CObject;
-
-namespace Objects::Properties
-{
-	class CProperty;
-}
+class CReferencer;
 
 class CObjectLink
 {
-	using CProperty = Objects::Properties::CProperty;
-
 public:
-	CObjectLink(CProperty* InProperty, CObject* InObject);
+	CObjectLink(CReferencer* InReferencer, CObject* InObject);
 	~CObjectLink() = default;
 	
 	CObject* Object() const;
 	CObject* Parent() const;
-	CProperty* Property() const;
+	CReferencer* Referencer() const;
 	
 private:
 	CObject* _object;
 	CObject* _parent;
-	CProperty* _property;
+	CReferencer* _referencer;
 };

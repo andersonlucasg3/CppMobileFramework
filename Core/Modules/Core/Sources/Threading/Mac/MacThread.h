@@ -20,7 +20,7 @@ public:
     CORE_API void SetName(const CString& Name) override;
     CORE_API const CString& Name() const override;
 
-    CORE_API void Start(const TFunction<void(const CThreadWeakPtr&)>& ThreadFunc) override;
+    CORE_API void Start(const TFunction<void(CThread*)>& ThreadFunc) override;
     CORE_API void Join() override;
 
     CORE_API void Sleep(UInt64 InTimeMilliseconds) const override;

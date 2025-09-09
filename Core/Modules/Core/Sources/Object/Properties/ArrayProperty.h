@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Property.h"
+#include "Object/Collector/Referencer.h"
 
 #include "Templates/Map.h"
 
@@ -13,9 +13,9 @@ class CObject;
 
 namespace Objects::Properties
 {
-    class CArrayProperty : public CProperty
+    class CArrayProperty : public CReferencer
     {
-        using Super = CProperty;
+        using Super = CReferencer;
 
     public:
         CORE_API CArrayProperty(CObject* InParent);

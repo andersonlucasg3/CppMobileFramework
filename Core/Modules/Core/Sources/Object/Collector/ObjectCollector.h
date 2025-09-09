@@ -3,32 +3,36 @@
 #include "Templates/Set.h"
 #include "Templates/Map.h"
 
+#include "Threading/Atomic.h"
+#include "Threading/Semaphore.h"
 #include "Threading/CriticalSection.h"
 
 class CObject;
 class CObjectLink;
+class CReferencer;
+class CThread;
 
 struct SCollector;
-
-namespace Objects::Properties
-{
-	class CProperty;
-}
+struct SObjectCollectedListenerHandle;
 
 class CObjectCollector
 {
-	using CProperty = Objects::Properties::CProperty;
-
 public:
 	CORE_API CObjectCollector();
     CORE_API ~CObjectCollector();
+
+	CORE_API void StartCollecting(UInt64 IntervalInMillis);
+	CORE_API bool HasStartedCollecting() const;
     
 	CORE_API SCollector* Collector() const;
 	CORE_API void PushCollector(SCollector* Collector);
 	CORE_API void PopCollector();
 	
-	CORE_API CObjectLink* AddObjectLink(CObject* Obj, CProperty* Property);
+	CORE_API CObjectLink* AddObjectLink(CObject* Obj, CReferencer* Referencer);
 	CORE_API void RemoveObjectLink(CObjectLink* Link);
+
+	CORE_API const SObjectCollectedListenerHandle& AddOnObjectCollectedListener(CObject* Object, const TFunction<void()>& OnCollected);
+	CORE_API void RemoveOnObjectCollectedListener(CObject* Object, SObjectCollectedListenerHandle& Handle);
 	
 	CORE_API bool HasLinks(CObject* Obj) const;
 	CORE_API TArray<CObjectLink*> LinksForObject(CObject* Obj) const;
@@ -41,9 +45,9 @@ public:
 	
 	CORE_API SizeT AliveObjectCount() const;
 
-	CORE_API void CollectGarbage();
+	CORE_API void SetQueuedForDestruction(CObject* Obj, bool bEnqueue);
 
-	CORE_API CORE_API void SetQueuedForDestruction(CObject* Obj, bool bEnqueue);
+	CORE_API void ForceCollectGarbage();
 	
 private:
 	SCriticalSection _objectsCriticalSection;
@@ -53,9 +57,19 @@ private:
 
 	SCriticalSection _destructionQueueCriticalSection;
 	TSet<CObject*> _destructionQueue;
+
+	SCriticalSection _listenersCriticalSection;
+	TMap<CObject*, TMap<SObjectCollectedListenerHandle, TFunction<void()>>> _collectedListeners;
 	
 	SCriticalSection _collectorCriticalSection;
 	SCollector* _currentCollector;
+
+	CThread* _garbageCollectorThread;
+	SSemaphore _collectGarbageSemaphore;
+	TAtomic<bool> _bHasStartedCollecting = false;
+	TAtomic<bool> _bIsGarbageCollecting = false;
+
+	void CollectGarbage();
 
 	void DestroyQueued();
 	void DestroyObject(CObject* Obj);

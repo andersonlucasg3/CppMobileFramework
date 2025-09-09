@@ -19,20 +19,20 @@ const CString& CMacThread::Name() const
     return ThreadName;
 }
 
-void CMacThread::Start(const TFunction<void(const CThreadWeakPtr&)>& ThreadFunc)
+void CMacThread::Start(const TFunction<void(CThread*)>& ThreadFunc)
 {
     Super::Start(ThreadFunc);
 
     if (!Thread)
     {
-        Thread = MakeShared<std::thread>([WeakThread = StaticCastWeakPtr<CMacThread>(AsWeak()), ThreadFunc]
+        Thread = MakeShared<std::thread>([this, ThreadFunc]
         {
-            pthread_setname_np(*WeakThread->ThreadName.SubString(0, 15));
-            while(WeakThread->IsRunning())
+            pthread_setname_np(*ThreadName.SubString(0, 15));
+            while(IsRunning())
             {
                 NS::AutoreleasePool* Pool = NS::AutoreleasePool::alloc()->init();
 
-                ThreadFunc(WeakThread);
+                ThreadFunc(this);
 
                 Pool->drain();
             }

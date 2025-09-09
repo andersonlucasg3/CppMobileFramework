@@ -2,9 +2,14 @@
 
 #include "Assert.h"
 
+#include "Threading/Thread.h"
+
 #include "Object/Object.h"
+#include "Object/ObjectPtr.h"
+#include "Object/WeakObjectPtr.h"
 #include "Object/Collector/CollectorScope.h"
 #include "Object/Collector/ObjectCollector.h"
+#include <unistd.h>
 
 REGISTER_TEST_CLASS(ObjectCollectorTests);
 
@@ -44,7 +49,7 @@ static void BasicGCTests(CAssert* Assert)
 
     ASSERT_EQUAL(GObjectCollector.AliveObjectCount(), 2);
 
-    GObjectCollector.CollectGarbage();
+    GObjectCollector.ForceCollectGarbage();
     
     ASSERT_EQUAL(GObjectCollector.AliveObjectCount(), 1);
 
@@ -64,7 +69,7 @@ static void BasicGCTests(CAssert* Assert)
 
     RootedObject->MakeUnrooted();
 
-    GObjectCollector.CollectGarbage();
+    GObjectCollector.ForceCollectGarbage();
 
     ASSERT_EQUAL(GObjectCollector.AliveObjectCount(), 0);
 }
@@ -87,27 +92,50 @@ static void TestCyclicCollect(CAssert* Assert)
 
     ASSERT_EQUAL(GObjectCollector.AliveObjectCount(), 3);
 
-    GObjectCollector.CollectGarbage();
+    GObjectCollector.ForceCollectGarbage();
 
     ASSERT_EQUAL(GObjectCollector.AliveObjectCount(), 3);
 
     RootedObject->MakeUnrooted();
 
-    GObjectCollector.CollectGarbage();
+    GObjectCollector.ForceCollectGarbage();
 
     ASSERT_EQUAL(GObjectCollector.AliveObjectCount(), 0);
+}
 
-    (new CRootedTestObject())->MakeRooted();
-    (new CRootedTestObject())->MakeRooted();
-    (new CRootedTestObject())->MakeRooted();
+void TestThreadedCollect(CAssert* Assert)
+{
+    TObjectPtr<CObject> NullPtrObject = nullptr;
+    TObjectPtr<CObject> TestObject = new CObject;
 
-    ASSERT_EQUAL(GObjectCollector.AliveObjectCount(), 3);
+    CObject* Obj = new CObject;
+    TWeakObjectPtr<CObject> WeakObject = Obj;
 
-    // Will be deallocated on GC destructor
+    ASSERT_EQUAL(WeakObject.IsValid(), true);
+    ASSERT_EQUAL(WeakObject.Get(), Obj);
+    
+    ASSERT_EQUAL(GObjectCollector.AliveObjectCount(), 2);
+
+    GObjectCollector.StartCollecting(1000);
+
+    ::sleep(1500);
+
+    ASSERT_EQUAL(WeakObject.IsValid(), false);
+    // Obj should point to a deleted mem 
+
+    Obj = TestObject.Get();
+    TestObject = nullptr;
+
+    GObjectCollector.ForceCollectGarbage();
+
+    ::sleep(1000);
+
+    ASSERT_EQUAL(GObjectCollector.AliveObjectCount(), 0);
 }
 
 void CObjectCollectorTests::TestCase()
 {
     BasicGCTests(Assert);
     TestCyclicCollect(Assert);
+    TestThreadedCollect(Assert);
 }

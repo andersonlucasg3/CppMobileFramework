@@ -9,6 +9,8 @@
 #include "Properties/Property.h"
 #include "Properties/ArrayProperty.h"
 
+#include "Object/Collector/Referencer.h"
+
 DECLARE_CLASS_HEADER(Object);
 
 class CObject
@@ -30,7 +32,7 @@ public:
 	}
 
 private:
-	TArray<Objects::Properties::CProperty*> _properties;
+	TArray<CReferencer*> _referencers;
 
 	SCriticalSection _criticalSection;
 	bool _bIsRooted = false;
@@ -40,7 +42,6 @@ private:
 
 	void SetQueuedForDestruction(bool bIsQueuedForDestruction);
 
+	friend class CReferencer;
 	friend class CObjectCollector;
-
-	friend class Objects::Properties::CProperty;
 };
