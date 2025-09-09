@@ -1,13 +1,13 @@
 #pragma once
 
-#include "Object/Collector/Referencer.h"
-#include "Object/Object.h"
-#include "Object/Properties/Property.h"
-#include "Object/Collector/ObjectCollector.h"
-#include "Threading/CriticalSection.h"
 #include "Threading/ScopeLock.h"
+#include "Threading/CriticalSection.h"
 
-#include <cstddef>
+#include "Object/Collector/Referencer.h"
+#include "Object/Collector/ObjectCollector.h"
+
+class CObject;
+class CObjectLink;
 
 template<typename TObject = CObject>
 class TObjectPtr : public CReferencer
@@ -17,25 +17,22 @@ class TObjectPtr : public CReferencer
 public:
     TObjectPtr()
     :   Super(nullptr)
-    ,   _object(nullptr)
     {
         //
     }
 
     TObjectPtr(TObject* Object)
     :   Super(nullptr)
-    ,   _object(Object)
-    ,   _link(GObjectCollector.AddObjectLink(_object, this))
     {
-        //
+        _object = Object;
+        _link = GObjectCollector.AddObjectLink(_object, this);
     }
 
     TObjectPtr(const TObjectPtr& Other)
     :   Super(nullptr)
-    ,   _object(Other._object)
-    ,   _link(GObjectCollector.AddObjectLink(_object, this))
     {
-        //
+        _object = Other._object;
+        _link = GObjectCollector.AddObjectLink(_object, this);
     }
 
     ~TObjectPtr()
@@ -62,6 +59,8 @@ public:
 
         _object = NewObject;
         _link = GObjectCollector.AddObjectLink(_object, this);
+
+        return *this;
     }
 
     TObjectPtr& operator=(const TObjectPtr& Other)
@@ -72,6 +71,8 @@ public:
 
         _object = Other._object;
         _link = GObjectCollector.AddObjectLink(_object, this);
+
+        return *this;
     }
 
     operator TObject*()
@@ -89,8 +90,8 @@ public:
     }
 
 private:
-    TObject* _object;
-    CObjectLink* _link;
+    TObject* _object = nullptr;
+    CObjectLink* _link = nullptr;
 
     SCriticalSection _criticalSection;
 

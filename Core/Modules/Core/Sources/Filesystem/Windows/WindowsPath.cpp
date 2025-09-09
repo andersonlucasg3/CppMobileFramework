@@ -49,15 +49,18 @@ CString CWindowsPath::GetPathRoot(const CString& InPath) const
 {
     CString Path = InPath;
 
-    if (Path.IsEmpty() || Path.Len() < 2)
+    if (Path.IsEmpty())
     {
         return Path;
     }
 
-    if (Path[1] != ':')
+    if (Path == ".")
     {
-        const CString& WorkingDirectory = GDesktopProcess.GetContainerPath();
-        Path = WorkingDirectory;
+        Path = GDesktopProcess.GetContainerPath();
+    }
+    else if (Path[1] != ':')
+    {
+        Path = GPath.Combine({ GDesktopProcess.GetContainerPath(), Path });
     }
 
     Path = GetFullPath(Path);

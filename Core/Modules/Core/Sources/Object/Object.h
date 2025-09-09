@@ -17,7 +17,7 @@ class CObject
 {	
 public:
 	CORE_API CObject();
-	CORE_API virtual ~CObject();
+	CORE_API virtual ~CObject() = default;
 
 	CORE_API bool IsRooted() const;
 	CORE_API void MakeRooted();

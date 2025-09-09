@@ -56,8 +56,8 @@ namespace Objects::Properties
 		}
 
 	private:
-		TObject* _object;
-		CObjectLink* _link;
+		TObject* _object = nullptr;
+		CObjectLink* _link = nullptr;
 		SCriticalSection _criticalSection;
 
 		inline void SetObject(TObject* InObject)

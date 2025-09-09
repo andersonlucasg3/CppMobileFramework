@@ -21,7 +21,11 @@ void CFilesystemTests::TestFiles()
     ASSERT_EQUAL(Path, Combined);
     ASSERT_FALSE(Ref->Exists());
 
+#if PLATFORM_WINDOWS
+    SFileRef ExistingRef = "./CoreTests.exe";
+#elif PLATFORM_MACOS
     SFileRef ExistingRef = "./CoreTests";
+#endif
 
     ASSERT_TRUE(ExistingRef->Exists());
 }

@@ -4,7 +4,7 @@
 
 #include "Templates/Functions.h"
 
-#include "Object/Object.h"
+#include "Object/ClassMacros.h"
 
 #include "String/String.h"
 
@@ -12,10 +12,8 @@
 
 DECLARE_CLASS_HEADER(Thread);
 
-class CThread : public CObject
+class CThread : public TSharedFromThis<CThread>
 {
-    using Super = CObject;
-    
 public:
     CORE_API CThread() = default;
     CORE_API ~CThread() override = default;
@@ -23,14 +21,19 @@ public:
     CORE_API virtual void SetName(const CString& Name) = 0;
     CORE_API virtual const CString& Name() const = 0;
 
-    CORE_API virtual bool IsRunning();
-    CORE_API virtual void Start(const TFunction<void(CThread*)>& ThreadFunc);
+    CORE_API void Start(const TFunction<void(const CThreadWeakPtr&)>& ThreadFunc);
     CORE_API virtual void Join() = 0;
-    CORE_API virtual void Exit();
+    CORE_API void Exit();
 
+    CORE_API virtual bool IsRunning() const;
     CORE_API virtual void Sleep(UInt64 InTimeMilliseconds) const = 0;
 
-    CORE_API static CThread* Create();
+    CORE_API static CThreadPtr Create();
+    CORE_API static CThread& Current();
+    CORE_API static bool IsMainThread();
+
+protected:
+    CORE_API virtual void StartInternal(const TFunction<void(const CThreadWeakPtr&)>& ThreadFunc) = 0;
 
 private:
     bool _bIsRunning = false;

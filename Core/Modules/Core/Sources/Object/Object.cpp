@@ -8,11 +8,6 @@ CObject::CObject()
     GObjectCollector.WatchObject(this);
 }
 
-CObject::~CObject()
-{
-    
-}
-
 bool CObject::IsRooted() const
 {
     SScopeLock Lock(_criticalSection);

@@ -2,14 +2,11 @@
 
 #include "Assert.h"
 
-#include "Threading/Thread.h"
-
 #include "Object/Object.h"
 #include "Object/ObjectPtr.h"
 #include "Object/WeakObjectPtr.h"
 #include "Object/Collector/CollectorScope.h"
 #include "Object/Collector/ObjectCollector.h"
-#include <unistd.h>
 
 REGISTER_TEST_CLASS(ObjectCollectorTests);
 
@@ -116,9 +113,7 @@ void TestThreadedCollect(CAssert* Assert)
     
     ASSERT_EQUAL(GObjectCollector.AliveObjectCount(), 2);
 
-    GObjectCollector.StartCollecting(1000);
-
-    ::sleep(1500);
+    GObjectCollector.ForceCollectGarbage();
 
     ASSERT_EQUAL(WeakObject.IsValid(), false);
     // Obj should point to a deleted mem 
@@ -127,8 +122,6 @@ void TestThreadedCollect(CAssert* Assert)
     TestObject = nullptr;
 
     GObjectCollector.ForceCollectGarbage();
-
-    ::sleep(1000);
 
     ASSERT_EQUAL(GObjectCollector.AliveObjectCount(), 0);
 }

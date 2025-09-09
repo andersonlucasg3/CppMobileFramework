@@ -3,7 +3,7 @@
 class CObject;
 class CReferencer;
 
-class CObjectLink
+class CORE_API CObjectLink
 {
 public:
 	CObjectLink(CReferencer* InReferencer, CObject* InObject);
@@ -14,7 +14,7 @@ public:
 	CReferencer* Referencer() const;
 	
 private:
-	CObject* _object;
-	CObject* _parent;
-	CReferencer* _referencer;
+	CObject* _object = nullptr;
+	CObject* _parent = nullptr;
+	CReferencer* _referencer = nullptr;
 };

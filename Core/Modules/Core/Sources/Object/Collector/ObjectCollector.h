@@ -4,7 +4,6 @@
 #include "Templates/Map.h"
 
 #include "Threading/Atomic.h"
-#include "Threading/Semaphore.h"
 #include "Threading/CriticalSection.h"
 
 class CObject;
@@ -18,11 +17,8 @@ struct SObjectCollectedListenerHandle;
 class CObjectCollector
 {
 public:
-	CORE_API CObjectCollector();
+	CORE_API CObjectCollector() = default;
     CORE_API ~CObjectCollector();
-
-	CORE_API void StartCollecting(UInt64 IntervalInMillis);
-	CORE_API bool HasStartedCollecting() const;
     
 	CORE_API SCollector* Collector() const;
 	CORE_API void PushCollector(SCollector* Collector);
@@ -61,20 +57,15 @@ private:
 	SCriticalSection _listenersCriticalSection;
 	TMap<CObject*, TMap<SObjectCollectedListenerHandle, TFunction<void()>>> _collectedListeners;
 	
-	SCriticalSection _collectorCriticalSection;
-	SCollector* _currentCollector;
-
-	CThread* _garbageCollectorThread;
-	SSemaphore _collectGarbageSemaphore;
-	TAtomic<bool> _bHasStartedCollecting = false;
 	TAtomic<bool> _bIsGarbageCollecting = false;
 
+	// TODO: need a logic to schedule periodic collections on the main thread
 	void CollectGarbage();
 
 	void DestroyQueued();
 	void DestroyObject(CObject* Obj);
 
-	void RecursivelyMarkObjects(CObject* InFirstObject, CObject* InCurrentObject, TArray<CObject*>& RefMarked);
+	void RecursivelyMarkObjects(CObject* InFirstObject, CObject* InCurrentObject, TSet<CObject*>& RefMarked);
 };
 
 CORE_API extern CObjectCollector& GObjectCollector;

@@ -1,5 +1,7 @@
 #include "ObjectLink.h"
 
+#include "Object/Object.h"
+
 #include "Referencer.h"
 
 CObjectLink::CObjectLink(CReferencer* InReferencer, CObject* InObject)

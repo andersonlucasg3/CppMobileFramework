@@ -21,11 +21,7 @@
 static CObjectCollector ObjectCollector;
 CObjectCollector& GObjectCollector = ObjectCollector;
 
-CObjectCollector::CObjectCollector()
-:   _currentCollector(nullptr)
-{
-    
-}
+static thread_local SCollector* GCurrentCollector = nullptr;
 
 CObjectCollector::~CObjectCollector()
 {
@@ -36,76 +32,36 @@ CObjectCollector::~CObjectCollector()
 		Rooted->MakeUnrooted();
 	}
 
-	if (_bHasStartedCollecting)
-	{
-		_bHasStartedCollecting = false; // kills the thread
-		_collectGarbageSemaphore.NotifyOne(); // release the semaphore
-		_garbageCollectorThread->Join(); // wait the thread to finish
-	}
-
 	CollectGarbage(); // collect last garbage
-}
-
-void CObjectCollector::StartCollecting(UInt64 IntervalInMillis)
-{
-	if (_bHasStartedCollecting.CompareExchange(true)) return;
-
-	_garbageCollectorThread = CThread::Create();
-	_garbageCollectorThread->MakeRooted();
-
-	_garbageCollectorThread->Start([this, IntervalInMillis](CThread* Thread)
-	{
-		while (_bHasStartedCollecting)
-		{
-			_collectGarbageSemaphore.Wait(IntervalInMillis);
-
-			if (!_bHasStartedCollecting) return; // avoid the last GC here
-
-			CollectGarbage();
-
-			Thread->Sleep(100);
-		}
-	});
-}
-
-bool CObjectCollector::HasStartedCollecting() const
-{
-	return _bHasStartedCollecting;
 }
 
 SCollector* CObjectCollector::Collector() const
 {
-	SScopeLock Lock(_collectorCriticalSection);
-
-	return _currentCollector;
+	return GCurrentCollector;
 }
 
 void CObjectCollector::PushCollector(SCollector *Collector)
 {
-	SScopeLock Lock(_collectorCriticalSection);
-
-	if (_currentCollector != nullptr)
+	if (GCurrentCollector != nullptr)
 	{
-		Collector->SetParent(_currentCollector);
+		Collector->SetParent(GCurrentCollector);
 	}
 	
-	_currentCollector = Collector;
+	GCurrentCollector = Collector;
 }
 
 void CObjectCollector::PopCollector()
 {
-	SScopeLock Lock(_collectorCriticalSection);
-
-	if (_currentCollector == nullptr)
+	if (GCurrentCollector == nullptr)
 	{
 		return;
 	}
 
 	// copy
-	TArray<CObject*> WatchedObjects = _currentCollector->WatchedObjects();
+	TArray<CObject*> WatchedObjects = GCurrentCollector->WatchedObjects();
 
-	SCollector* Parent = _currentCollector->Parent();
-	_currentCollector = nullptr;
+	SCollector* Parent = GCurrentCollector->Parent();
+	GCurrentCollector = nullptr;
 	
 	for (CObject* Obj : WatchedObjects)
 	{
@@ -120,16 +76,19 @@ void CObjectCollector::PopCollector()
 		}
 	}
 	
-	_currentCollector = Parent;
+	GCurrentCollector = Parent;
 
-	DestroyQueued();	
+	if (CThread::IsMainThread())
+	{
+		DestroyQueued();
+	}
 }
 
 CObjectLink* CObjectCollector::AddObjectLink(CObject* Obj, CReferencer* Referencer)
 {
 	if (Obj == nullptr) return nullptr;
 	
-	SScopeLock Lock(_objectsCriticalSection, true);
+	SScopeLock Lock(_objectsCriticalSection);
 
 	if (Obj->IsQueuedForDestruction())
 	{
@@ -223,7 +182,7 @@ void CObjectCollector::WatchObject(CObject *Obj)
 
 	if (Obj->IsRooted()) return;
 	
-	if (SCollector* Collector = _currentCollector)
+	if (SCollector* Collector = GCurrentCollector)
 	{
 		Collector->WatchObject(Obj);
 	}
@@ -237,7 +196,7 @@ void CObjectCollector::UnWatchObject(CObject *Obj)
 
 	if (Obj->IsRooted()) return;
 	
-	if (SCollector* Collector = _currentCollector)
+	if (SCollector* Collector = GCurrentCollector)
 	{
 		Collector->UnWatchObject(Obj);
 	}
@@ -249,9 +208,9 @@ void CObjectCollector::AddToRoot(CObject* Obj)
 
 	_rootedObjects.Add(Obj);
 
-	if (_currentCollector != nullptr)
+	if (GCurrentCollector != nullptr)
 	{
-		_currentCollector->UnWatchObject(Obj);
+		GCurrentCollector->UnWatchObject(Obj);
 	}
 }
 
@@ -261,9 +220,9 @@ void CObjectCollector::RemoveFromRoot(CObject* Obj)
 
 	_rootedObjects.Remove(Obj);
 
-	if (_currentCollector != nullptr)
+	if (GCurrentCollector != nullptr)
 	{
-		_currentCollector->WatchObject(Obj);
+		GCurrentCollector->WatchObject(Obj);
 	}
 }
 
@@ -276,7 +235,7 @@ SizeT CObjectCollector::AliveObjectCount() const
 
 void CObjectCollector::SetQueuedForDestruction(CObject* Obj, bool bEnqueue)
 {
-	SScopeLock Lock(_destructionQueueCriticalSection);
+	SScopeLock Lock(_destructionQueueCriticalSection, true);
 
 	if (bEnqueue)
 	{
@@ -290,25 +249,22 @@ void CObjectCollector::SetQueuedForDestruction(CObject* Obj, bool bEnqueue)
 
 void CObjectCollector::ForceCollectGarbage()
 {
+	if (!CThread::IsMainThread()) return;
 	if (_bIsGarbageCollecting) return;
 
-	if (_bHasStartedCollecting)
-	{
-		_collectGarbageSemaphore.NotifyOne();
-	}
-	else
-	{
-		CollectGarbage(); // no thread call directly
-	}
+	CollectGarbage();
 }
 
 void CObjectCollector::CollectGarbage()
 {
+	if (!CThread::IsMainThread()) return;
+
 	if (_bIsGarbageCollecting.CompareExchange(true)) return;
 
-	SScopeLock ObjectsLock(_objectsCriticalSection, true);
+	SScopeLock ObjectsLock(_objectsCriticalSection);
+	SScopeLock DestructionLock(_destructionQueueCriticalSection);
 
-	static TArray<CObject*> Marked;
+	static TSet<CObject*> Marked;
 	
 	for (CObject* Object : _rootedObjects)
 	{
@@ -334,7 +290,7 @@ void CObjectCollector::CollectGarbage()
 
 void CObjectCollector::DestroyQueued()
 {
-	SScopeLock DestructionLock(_destructionQueueCriticalSection);
+	SScopeLock DestructionLock(_destructionQueueCriticalSection, true);
 
 	for (CObject* Object : _destructionQueue)
 	{
@@ -384,7 +340,7 @@ void CObjectCollector::DestroyObject(CObject* Obj)
 	delete Obj;
 }
 
-void CObjectCollector::RecursivelyMarkObjects(CObject* InFirstObject, CObject* InCurrentObject, TArray<CObject*>& RefMarked)
+void CObjectCollector::RecursivelyMarkObjects(CObject* InFirstObject, CObject* InCurrentObject, TSet<CObject*>& RefMarked)
 {
 	TFunction<void(CObjectLink*)> LinkFunction = [this, InFirstObject, &RefMarked](CObjectLink* Link)
 	{
@@ -396,7 +352,7 @@ void CObjectCollector::RecursivelyMarkObjects(CObject* InFirstObject, CObject* I
 		this->RecursivelyMarkObjects(InFirstObject, Link->Object(), RefMarked);
 	};
 
-	RefMarked.Add(InCurrentObject);
+	RefMarked.Insert(InCurrentObject);
 
 	for (CReferencer* Referencer : InCurrentObject->_referencers)
 	{
