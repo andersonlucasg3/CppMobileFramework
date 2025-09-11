@@ -99,7 +99,7 @@ bool CAppleFile::Read(TArray<int8_t>& OutByteArray)
 
 bool CAppleFile::Read(void*& OutData, UInt64& Size)
 {
-	assert(OutData != nullptr);
+	if (OutData == nullptr) throw "OutData should not be nullptr";
 
 	UInt64 BytesRead = 0;
 	do
@@ -148,9 +148,9 @@ CAppleFile::~CAppleFile()
 	}
 }
 
-CAppleFilePtr CAppleFile::Create(const CString &FilePath)
+CAppleFileObjectPtr CAppleFile::Create(const CString &FilePath)
 {
-	return MakeShared<CAppleFile>(FilePath);
+	return new CAppleFile(FilePath);
 }
 
 CAppleFile* CAppleFile::CreateUnsafe(const char *FilePath)

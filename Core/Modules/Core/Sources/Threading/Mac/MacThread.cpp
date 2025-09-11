@@ -11,23 +11,34 @@
 
 void CMacThread::SetName(const CString &Name)
 {
-    ThreadName = Name;
+    _threadName = Name;
 }
 
 const CString& CMacThread::Name() const
 {
-    return ThreadName;
+    return _threadName;
 }
 
-void CMacThread::Start(const TFunction<void(CThread*)>& ThreadFunc)
+void CMacThread::Join()
 {
-    Super::Start(ThreadFunc);
-
-    if (!Thread)
+    if (_thread && _thread->joinable())
     {
-        Thread = MakeShared<std::thread>([this, ThreadFunc]
+        _thread->join();
+    }
+}
+
+void CMacThread::Sleep(UInt64 InMilliseconds) const
+{
+    std::this_thread::sleep_for(std::chrono::milliseconds(InMilliseconds));
+}
+
+void CMacThread::StartInternal(const TFunction<void(const CThreadWeakObjectPtr&)>& ThreadFunc)
+{
+    if (!_thread)
+    {
+        _thread = MakeShared<std::thread>([this, ThreadFunc]
         {
-            pthread_setname_np(*ThreadName.SubString(0, 15));
+            pthread_setname_np(*_threadName.SubString(0, 15));
             while(IsRunning())
             {
                 NS::AutoreleasePool* Pool = NS::AutoreleasePool::alloc()->init();
@@ -38,17 +49,4 @@ void CMacThread::Start(const TFunction<void(CThread*)>& ThreadFunc)
             }
         });
     }
-}
-
-void CMacThread::Join()
-{
-    if (Thread && Thread->joinable())
-    {
-        Thread->join();
-    }
-}
-
-void CMacThread::Sleep(UInt64 InMilliseconds) const
-{
-    std::this_thread::sleep_for(std::chrono::milliseconds(InMilliseconds));
 }

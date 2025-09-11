@@ -12,10 +12,10 @@ CFile::CFile(const CString& InFilePath) :
 
 }
 
-CFilePtr CFile::Create(const CString& FilePath)
+CFileObjectPtr CFile::Create(const CString& FilePath)
 {
-	CFilePtr File = MakeShared<CPlatformFile>(FilePath);
-	if (!File->Create()) return CFilePtr();
+	CFile* File = new CPlatformFile(FilePath);
+	if (!File->Create()) return nullptr;
 	return File;
 }
 
@@ -26,10 +26,10 @@ CFile* CFile::CreateUnsafe(const char* FilePath)
 	return FilePtr;
 }
 
-CFilePtr CFile::Open(const CString& FilePath, EOpenMode Mode)
+CFileObjectPtr CFile::Open(const CString& FilePath, EOpenMode Mode)
 {
-	CFilePtr File = MakeShareable(new CPlatformFile(FilePath));
-	if (!File->Open(Mode)) return CFilePtr();
+	CFile* File = new CPlatformFile(FilePath);
+	if (!File->Open(Mode)) return nullptr;
 	return File;
 }
 
@@ -42,7 +42,7 @@ CFile* CFile::OpenUnsafe(const char* FilePath, EOpenMode Mode)
 
 bool CFile::Delete(const CString& FilePath)
 {
-	CFilePtr File = Create(FilePath);
+	CFile* File = CreateUnsafe(*FilePath);
 	return File->Delete();
 }
 

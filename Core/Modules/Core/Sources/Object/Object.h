@@ -1,7 +1,5 @@
 #pragma once
 
-#include "Class.h"
-
 #include "Templates/Array.h"
 
 #include "Threading/CriticalSection.h"
@@ -10,8 +8,6 @@
 #include "Properties/ArrayProperty.h"
 
 #include "Object/Collector/Referencer.h"
-
-DECLARE_CLASS_HEADER(Object);
 
 class CObject
 {	
@@ -24,12 +20,6 @@ public:
 	CORE_API void MakeUnrooted();
 
 	CORE_API bool IsQueuedForDestruction() const;
-
-	template<typename TOther>
-	bool IsA()
-	{
-		return dynamic_cast<TOther*>(this) != nullptr;
-	}
 
 private:
 	TArray<CReferencer*> _referencers;

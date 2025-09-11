@@ -2,16 +2,15 @@
 
 #include "Threading/Thread.h"
 
+#include "Object/ClassMacros.h"
+
 #include <thread>
 
-DECLARE_CLASS_HEADER(MacThread);
+FORWARD_DECLARE_OBJECT(MacThread);
 
 class CMacThread : public CThread
 {
     using Super = CThread;
-
-    CString ThreadName;
-    TSharedPtr<std::thread> Thread;
 
 public:
     CORE_API CMacThread() = default;
@@ -20,10 +19,16 @@ public:
     CORE_API void SetName(const CString& Name) override;
     CORE_API const CString& Name() const override;
 
-    CORE_API void Start(const TFunction<void(CThread*)>& ThreadFunc) override;
     CORE_API void Join() override;
 
     CORE_API void Sleep(UInt64 InTimeMilliseconds) const override;
+
+private:
+    CString _threadName;
+    TSharedPtr<std::thread> _thread;
+
+    CORE_API void StartInternal(const TFunction<void(const CThreadWeakObjectPtr&)>& ThreadFunc) override;
 };
 
 typedef CMacThread CPlatformThread;
+FORWARD_DECLARE_OBJECT_PTR(PlatformThread);

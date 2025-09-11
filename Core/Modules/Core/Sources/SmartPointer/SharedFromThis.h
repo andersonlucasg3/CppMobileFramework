@@ -1,7 +1,5 @@
 #pragma once
 
-#include "Defines/Asserts.h"
-#include "Logger/Logger.h"
 #include <type_traits>
 
 struct IDeleter;
@@ -71,3 +69,8 @@ private:
 	template<typename TPointer, typename DeleterT>
 	friend TSharedPtr<TPointer> MakeShareable(TPointer*);
 };
+
+#define FORWARD_DECLARE_SHARED(ClassName)										\
+class C##ClassName;                                                             \
+using C##ClassName##Ptr = TSharedPtr<C##ClassName>;                       		\
+using C##ClassName##WeakPtr = TWeakPtr<C##ClassName>

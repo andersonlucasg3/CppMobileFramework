@@ -2,14 +2,15 @@
 
 #include "Templates/Array.h"
 
-#include "Object/ClassMacros.h"
-
 #include "String/String.h"
+
+#include "Object/Object.h"
 #include "Object/ClassMacros.h"
+#include "Object/ObjectPtr.h"
 
-DECLARE_CLASS_HEADER(File);
+FORWARD_DECLARE_OBJECT(File);
 
-class CFile
+class CFile : public CObject
 {
 public:
 	enum EOpenMode : UByte
@@ -31,10 +32,10 @@ protected:
 public:
 	CORE_API virtual ~CFile() = default;
 
-	CORE_API static CFilePtr Create(const CString& FilePath);
-	CORE_API static CFile* CreateUnsafe(const char* FilePath);
-	CORE_API static CFilePtr Open(const CString& FilePath, EOpenMode Mode);
-	CORE_API static CFile* OpenUnsafe(const char* FilePath, EOpenMode Mode);
+	CORE_API static CFileObjectPtr Create(const CString& FilePath);
+	CORE_API static CFile* CreateUnsafe(const char* FilePath); // will be collected in the end of garbage scope
+	CORE_API static CFileObjectPtr Open(const CString& FilePath, EOpenMode Mode);
+	CORE_API static CFile* OpenUnsafe(const char* FilePath, EOpenMode Mode); // will be collected in the end of garbage scope
 	CORE_API static bool Delete(const CString& FilePath);
 	CORE_API static bool Exists(const CString& FilePath);
 

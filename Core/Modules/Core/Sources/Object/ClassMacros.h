@@ -1,8 +1,12 @@
 #pragma once
 
-#include "SmartPointer/SharedPointer.h"
+#include "ObjectPtr.h"
+#include "WeakObjectPtr.h"
 
-#define DECLARE_CLASS_HEADER(ClassName)                                         \
+#define FORWARD_DECLARE_OBJECT_PTR(ClassName)                                   \
+typedef TObjectPtr< C##ClassName > C##ClassName##ObjectPtr;                     \
+typedef TWeakObjectPtr< C##ClassName > C##ClassName##WeakObjectPtr
+
+#define FORWARD_DECLARE_OBJECT(ClassName)                                       \
 class C##ClassName;                                                             \
-using C##ClassName##Ptr = TSharedPtr<C##ClassName>;                             \
-using C##ClassName##WeakPtr = TWeakPtr<C##ClassName>
+FORWARD_DECLARE_OBJECT_PTR(ClassName)

@@ -32,7 +32,7 @@ void CHttpRequestManager::ThreadWorker(const CThreadWeakPtr& Thread)
 CHttpRequestManager::CHttpRequestManager()
 :   _httpThread(CThread::Create())
 {
-    //
+    MakeRooted(); // never gets destroyed
 }
 
 CHttpRequestManager::~CHttpRequestManager()

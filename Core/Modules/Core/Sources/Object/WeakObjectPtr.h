@@ -7,6 +7,8 @@
 #include "Object/Collector/ObjectCollectedListenerHandle.h"
 
 class CObject;
+template<typename TObject>
+class TObjectPtr;
 
 template<typename TObject = CObject>
 class TWeakObjectPtr
@@ -33,6 +35,18 @@ public:
     {
         _object = Weak;
         _handle = GObjectCollector.AddOnObjectCollectedListener(_object, [this]()
+        {
+            SScopeLock Lock(_criticalSection);
+
+            _object = nullptr;
+        });
+    }
+
+    template<typename TOtherObject = CObject>
+    TWeakObjectPtr(const TObjectPtr<TOtherObject>& ObjectPtr)
+    {
+        _object = ObjectPtr;
+        _handle = GObjectCollector.AddOnObjectCollectedListener(_object, [this]
         {
             SScopeLock Lock(_criticalSection);
 

@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Object/Object.h"
 #include "Templates/Queue.h"
 
 #include "SmartPointer/SharedFromThis.h"
@@ -9,7 +10,7 @@
 
 #include "HttpRequest.h"
 
-class CHttpRequestManager
+class CHttpRequestManager : public CObject
 {
     SCriticalSection _httpThreadCS;
     CThreadPtr _httpThread;

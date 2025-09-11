@@ -7,20 +7,20 @@
 #include COMPILE_PLATFORM_HEADER(Thread.h)
 
 static thread_local bool GIsMainThread = true;
-static thread_local TSharedPtr<CPlatformThread> GMainThread;
+static CPlatformThreadObjectPtr GMainThread;
 // this will be overriden by each thread when started
-static thread_local TWeakPtr<CThread> GCurrentThread = GMainThread; // main thread
+static thread_local CThreadWeakObjectPtr GCurrentThread = GMainThread; // main thread
 
-void CThread::Start(const TFunction<void(const TWeakPtr<CThread>&)>& ThreadFunc)
+void CThread::Start(const TFunction<void(const CThreadWeakObjectPtr&)>& ThreadFunc)
 {
     SScopeLock Lock(_isRunningSection);
     _bIsRunning = true;
 
-    StartInternal([TFunc = ThreadFunc](const TWeakPtr<CThread>& WeakThread)
+    StartInternal([TFunc = ThreadFunc](CThread* Thread)
     {
         GIsMainThread = false;
-        GCurrentThread = WeakThread;
-        TFunc(WeakThread);
+        GCurrentThread = Thread;
+        TFunc(Thread);
         GCurrentThread = nullptr;
     });
 }
@@ -37,14 +37,14 @@ bool CThread::IsRunning() const
     return _bIsRunning;
 }
 
-CThreadPtr CThread::Create()
+TObjectPtr<CThread> CThread::Create()
 {
-    return MakeShared<CPlatformThread>();
+    return new CPlatformThread;
 }
 
-CThread& CThread::Current()
+CThread* CThread::Current()
 {
-    return *GCurrentThread;
+    return GCurrentThread.Get();
 }
 
 bool CThread::IsMainThread()

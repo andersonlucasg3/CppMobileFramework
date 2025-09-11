@@ -6,8 +6,6 @@
 #include "SmartPointer/MakeAndCasts.h"
 #include "SmartPointer/Deleter.h"
 
-#include "Memory/Memory.h"
-
 template<typename TElement>
 struct SArrayDeleter : public TDeleter<TElement>
 {

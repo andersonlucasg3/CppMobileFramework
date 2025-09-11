@@ -1,13 +1,14 @@
 #pragma once
 
-#include "Object/ClassMacros.h"
 #include "Templates/Array.h"
 
 #include "Filesystem/File.h"
 
+#include "Object/ClassMacros.h"
+
 #include <cstdio>
 
-DECLARE_CLASS_HEADER(AppleFile);
+FORWARD_DECLARE_OBJECT(AppleFile);
 
 class CAppleFile : public CFile
 {
@@ -31,7 +32,7 @@ public:
     CORE_API CAppleFile(const CString& FilePath);
     CORE_API ~CAppleFile() override;
 
-    CORE_API static CAppleFilePtr Create(const CString& FilePath);
+    CORE_API static CAppleFileObjectPtr Create(const CString& FilePath);
     CORE_API static CAppleFile* CreateUnsafe(const char* FilePath);
     CORE_API static bool Exists(const CString& FilePath);
 };

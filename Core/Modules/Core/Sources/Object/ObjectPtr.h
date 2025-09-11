@@ -77,16 +77,12 @@ public:
 
     operator TObject*()
     {
-        SScopeLock Lock(_criticalSection);
-
-        return _object;
+        return Get();
     }
 
     TObject* operator->()
     {
-        SScopeLock Lock(_criticalSection);
-
-        return _object;
+        return Get();
     }
 
 private:
@@ -112,4 +108,7 @@ private:
             InFunc(_link);
         }
     }
+
+    template<typename TOtherObject>
+    friend class TWeakObjectPtr;
 };
