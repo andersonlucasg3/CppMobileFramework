@@ -19,7 +19,7 @@ class CMacHttpRequestManager : public CHttpRequestManager, public URLSessionData
 
     SharedPtr<URLSession> _urlSession;
 
-    TMap<Integer, CMacHttpRequestPtr> _requestsMap;
+    TMap<Integer, CMacHttpRequestObjectPtr> _requestsMap;
 
 protected:
     HTTP_API void URLSessionDidBecomeInvalidWithError(URLSession* Session, Error* error) override;
@@ -32,9 +32,9 @@ public:
     HTTP_API CMacHttpRequestManager();
     HTTP_API ~CMacHttpRequestManager() override = default;
 
-    HTTP_API CHttpRequestPtr CreateRequest() override;
+    HTTP_API CHttpRequest* CreateRequest() override;
 
-    HTTP_API void AddRequest(URLSessionTask* InTask, const CMacHttpRequestPtr& InRequest);
+    HTTP_API void AddRequest(URLSessionTask* InTask, CMacHttpRequest* InRequest);
 };
 
 HTTP_API extern CMacHttpRequestManager GMacHttpRequestManager;

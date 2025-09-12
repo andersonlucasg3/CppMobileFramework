@@ -201,7 +201,7 @@ public:
 
 	void RemoveAt(UInt64 Index, bool bKeepArraySize = true)
 	{
-		assert(Index <= ItemNum - 1);
+		if (Index < 0 || Index >= ItemNum) throw "Index out of bounds";
 		
 		ItemNum--;
 

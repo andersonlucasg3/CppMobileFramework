@@ -6,6 +6,7 @@
 
 #include "Properties/Property.h"
 #include "Properties/ArrayProperty.h"
+#include "Properties/QueueProperty.h"
 
 #include "Object/Collector/Referencer.h"
 

@@ -21,12 +21,12 @@ const char* ToString(EHttpRequestMethod InMethod)
 
 void CHttpRequest::SendErrorCallback(const CHttpRequestError& InError)
 {
-    _callbacks->HttpRequestFailedWithError(AsShared(), InError);
+    _callbacks->HttpRequestFailedWithError(this, InError);
 }
 
 void CHttpRequest::SendSuccessCallback()
 {
-    _callbacks->HttpRequestSucceeded(AsShared(), _response);
+    _callbacks->HttpRequestSucceeded(this, _response);
 }
 
 const CString& CHttpRequest::Endpoint() const

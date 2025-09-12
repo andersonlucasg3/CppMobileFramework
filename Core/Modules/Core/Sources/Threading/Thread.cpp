@@ -2,6 +2,7 @@
 
 #include "Defines/Preprocessors.h"
 
+#include "Object/Collector/CollectorScope.h"
 #include "ScopeLock.h"
 
 #include COMPILE_PLATFORM_HEADER(Thread.h)
@@ -16,11 +17,14 @@ void CThread::Start(const TFunction<void(const CThreadWeakObjectPtr&)>& ThreadFu
     SScopeLock Lock(_isRunningSection);
     _bIsRunning = true;
 
-    StartInternal([TFunc = ThreadFunc](CThread* Thread)
+    StartInternal([ThreadFunc](const CThreadWeakObjectPtr& Thread)
     {
         GIsMainThread = false;
         GCurrentThread = Thread;
-        TFunc(Thread);
+        {
+            SCollectorScope ThreadScope;
+            ThreadFunc(Thread);
+        }
         GCurrentThread = nullptr;
     });
 }

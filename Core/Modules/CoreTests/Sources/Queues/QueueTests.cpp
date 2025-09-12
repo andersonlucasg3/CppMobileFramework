@@ -1,25 +1,28 @@
 #include "QueueTests.h"
 
+#include "Assert.h"
+
 #include "Templates/Queue.h"
 
 #include "SmartPointer/MakeAndCasts.h"
 
 REGISTER_TEST_CLASS(QueueTests);
 
-inline void TestIntQueue()
+inline void TestIntQueue(CAssert* Assert)
 {
 	TQueue<int> IntQueue;
 
-	assert(IntQueue.IsEmpty());
+	ASSERT_TRUE(IntQueue.IsEmpty());
 
 	IntQueue.Enqueue(0);
 
-	assert(!IntQueue.IsEmpty());
+	ASSERT_FALSE(IntQueue.IsEmpty());
 
 	int Value;
-	assert(IntQueue.Peak(Value) && Value == 0);
+	ASSERT_TRUE(IntQueue.Peak(Value));
+	ASSERT_EQUAL(Value, 0);
 
-	assert(!IntQueue.IsEmpty());
+	ASSERT_FALSE(IntQueue.IsEmpty());
 
 	for (int32_t i = 1; i <= 10; i++)
 	{
@@ -28,12 +31,12 @@ inline void TestIntQueue()
 
 	for (int i = 0; i <= 10; i++)
 	{
-		assert(IntQueue.Dequeue(Value));
-		assert(Value == i);
+		ASSERT_TRUE(IntQueue.Dequeue(Value));
+		ASSERT_EQUAL(Value, i);
 	}
 }
 
-inline void TestSharedPtrQueue()
+inline void TestSharedPtrQueue(CAssert* Assert)
 {
 	TQueue<TSharedPtr<int>> QueueOfPtrs;
 
@@ -43,7 +46,7 @@ inline void TestSharedPtrQueue()
 	TSharedPtr<int> Deq;
 	QueueOfPtrs.Dequeue(Deq);
 
-	assert(*Deq == 1);
+	ASSERT_EQUAL(*Deq, 1);
 }
 
 inline void TestInterfaceQueue()
@@ -73,9 +76,9 @@ inline void TestInterfaceQueue()
 
 void CQueueTests::TestCase()
 {
-    TestIntQueue();
+    TestIntQueue(Assert);
 
-	TestSharedPtrQueue();
+	TestSharedPtrQueue(Assert);
 
 	TestInterfaceQueue();
 }

@@ -1,231 +1,145 @@
 #pragma once
 
+#include "Defines/Types.h"
+
 #include "Templates/Array.h"
+#include "Templates/Hashable.h"
+#include "Templates/LinkedList.h"
 
-#include "SmartPointer/SharedPointer.h"
+#include "Logger/Logger.h"
 
-// TODO: use TMap logic without the value to make this Set fast
 template<typename TElement>
 class TSet
 {
-	using SetType = TSharedPtr<TElement>;
-	using SSetDestructor = SArrayDeleter<TElement>;
-
-	SetType DataPtr;
-	UInt64 ItemNum;
-	UInt64 SetSize;
-
-	inline void SetAt(const UInt64& Index, const TElement& Item)
-	{
-		TElement& Element = *(DataPtr + Index);
-
-		Element = Item;
-	}
-
-	inline void IncreaseSet()
-	{
-		UInt64 NewSetSize = SetSize + 4;
-		SetType NewDataPtr = SetType(MakeShareable<TElement, SSetDestructor>(new TElement[NewSetSize]));
-		GMemory.Copy(DataPtr.Raw(), NewDataPtr.Raw(), sizeof(TElement) * ItemNum);
-		DataPtr = NewDataPtr;
-		SetSize = NewSetSize;
-	}
-
-	inline void DecreaseSet(bool bKeepSetSize)
-	{
-		if (!bKeepSetSize && (SetSize - ItemNum > 4))
-		{
-			UInt64 NewSetSize = ItemNum + 4;
-			SetType NewDataPtr = SetType(MakeShareable<TElement, SSetDestructor>(new TElement[NewSetSize]));
-			GMemory.Copy(DataPtr.Raw(), NewDataPtr.Raw(), sizeof(TElement) * ItemNum);
-			DataPtr = NewDataPtr;
-			SetSize = NewSetSize;
-		}
-	}
-
-	template<typename TEquatable>
-	inline bool IsEqual(TEquatable LHS, TEquatable RHS) const
-	{
-		return LHS == RHS;
-	}
-
-	template<>
-	inline bool IsEqual(const char* LHS, const char* RHS) const
-	{
-		return std::strcmp(LHS, RHS) == 0;
-	}
-
-	template<>
-	inline bool IsEqual(UByte LHS, UByte RHS) const
-	{
-		return LHS == RHS;
-	}
+    using TBucket = TLinkedList<TElement>;
 
 public:
-	inline TSet(SizeT Size = 4) :
-		DataPtr(MakeShareable<TElement, SSetDestructor>(new TElement[Size])),
-		ItemNum(0),
-		SetSize(Size)
-	{
-		assert(Size > 0);
-	}
-
-	inline TSet(const TElement* Data, const UInt64& Size) :
-		DataPtr(MakeShareable<TElement, SSetDestructor>(new TElement[Size])),
-		ItemNum(Size),
-		SetSize(Size)
-	{
-		GMemory.Copy(Data, DataPtr.Raw(), sizeof(TElement) * ItemNum);
-	}
-
-	inline TSet(const TSet& OtherSet) : TSet(OtherSet.DataPtr.Raw(), OtherSet.ItemNum)
+    TSet() : _buckets(16, true)
 	{
 
 	}
 
-	// other initializer lists constructor
-	inline TSet(std::initializer_list<TElement> InitList) noexcept :
-		DataPtr(MakeShareable<TElement, SSetDestructor>(new TElement[InitList.size()])),
-		ItemNum(0),
-		SetSize(InitList.size())
+    ~TSet() = default;
+
+    bool Insert(const TElement& Element)
 	{
-		for (const TElement& Element : InitList)
-		{
-			Insert(Element);
-		}
-	}
+		ResizeIfNeeded();
 
-	inline virtual ~TSet() = default;
+		SizeT Index = Hash(Element);
 
-	inline bool Insert(const TElement& NewItem)
-	{
-		// TODO: maybe there is a better performance wise way to do this?
-		if (Contains(NewItem)) return false;
+		TBucket& Bucket = _buckets[Index];
 
-		if (ItemNum == SetSize)
-		{
-			IncreaseSet();
-		}
+		if (Bucket.Contains(Element)) return false;
 
-		SetAt(ItemNum++, NewItem);
+		_size++;
+
+		Bucket.Add(Element);
 
 		return true;
 	}
 
-	inline bool Remove(const TElement& Element)
+	bool Remove(const TElement& Element)
 	{
-		int32_t IndexToRemove = -1;
-		for (UInt32 CurrentIndex = 0; CurrentIndex < ItemNum; CurrentIndex++)
+		SizeT Index = Hash(Element);
+
+		TBucket& Bucket = _buckets[Index];
+
+		TNode<TElement>* Current = Bucket.Head();
+		while (Current != nullptr)
 		{
-			const TElement& Other = *(DataPtr + CurrentIndex);
-			if (IsEqual<TElement>(Element, Other))
+			if (Element == Current->Value)
 			{
-				IndexToRemove = CurrentIndex;
-
-				break;
-			}
-		}
-
-		if (IndexToRemove != -1)
-		{
-			RemoveAt(IndexToRemove);
-
-			return true;
-		}
-
-		return false;
-	}
-
-	inline void RemoveAt(const UInt64& Index, bool bKeepSetSize = true)
-	{
-		assert(Index <= ItemNum - 1);
-
-		ItemNum--;
-
-		for (UInt64 CurrentIndex = Index; CurrentIndex < ItemNum; ++CurrentIndex)
-		{
-			SetAt(CurrentIndex, DataPtr[CurrentIndex + 1]);
-		}
-
-		DecreaseSet(bKeepSetSize);
-	}
-
-	inline void RemoveAll(bool bKeepSetSize = true)
-	{
-		for (UInt32 Index = 0; Index < ItemNum; ++Index)
-		{
-			TElement tempItem;
-			SetAt(Index, tempItem);
-		}
-
-		ItemNum = 0;
-
-		DecreaseSet(bKeepSetSize);
-	}
-
-	inline bool Contains(const TElement& Element) const
-	{
-		for (UInt64 CurrentIndex = 0; CurrentIndex < ItemNum; ++CurrentIndex)
-		{
-			const TElement& Other = *(DataPtr + CurrentIndex);
-			if (IsEqual<TElement>(Element, Other))
-			{
+				Bucket.Remove(Current);
+				
+				_size--;
+				
 				return true;
 			}
+
+			Current = Current->Next;
 		}
 
 		return false;
 	}
 
-	inline UInt32 Num() const
+	bool Contains(const TElement& Element)
 	{
-		return (UInt32)ItemNum;
+		SizeT Index = Hash(Element);
+
+		TBucket& Bucket = _buckets[Index];
+
+		return Bucket.Contains(Element);
 	}
 
-	inline bool IsEmpty() const
+	void RemoveAll()
 	{
-		return ItemNum == 0;
-	}
+		if (_size == 0) return;
 
-	inline TElement* GetData(bool bApplySetSizeToNumOfItems)
-	{
-		if (bApplySetSizeToNumOfItems)
+		_buckets.ForEach([](TBucket& Bucket)
 		{
-			ItemNum = SetSize;
+			Bucket.RemoveAll();
+		});
+
+		_size = 0;
+	}
+
+    template<typename TNum = SizeT>
+	TNum Num() const
+	{
+		return static_cast<TNum>(_size);
+	}
+
+	void ForEach(const TFunction<void(const TElement&)>& Func)
+	{
+		for (const TBucket& Bucket : _buckets)
+		{
+			Bucket.ForEach([Func](const TElement& Element)
+			{
+				Func(Element);
+			});
 		}
-
-		return DataPtr.Get();
 	}
 
-	inline const TElement* GetData() const
+protected:
+    void ResizeIfNeeded()
 	{
-		return DataPtr.Get();
+		if (_size > _buckets.Num() * 0.75f)
+		{
+			TArray<TBucket> OldBuckets = _buckets;
+			_buckets = TArray<TBucket>(OldBuckets.Num() * 2, true);
+			
+			for (const TBucket& Bucket : OldBuckets)
+			{
+				Bucket.ForEach([this](const TElement& Element)
+				{
+					SizeT NewIndex = Hash(Element); // doing against new bucket
+					_buckets[NewIndex].Add(Element);
+				});
+			}
+		}
 	}
 
-	inline TElement& First()
+    template<typename THashable, std::enable_if_t<std::is_integral_v<THashable> || std::is_enum_v<THashable>, bool> = true>
+    SizeT Hash(const THashable& Hashable) 
 	{
-		return *DataPtr.Get();
-	}
+		return static_cast<SizeT>(Hashable) % _buckets.Num();
+    }
 
-	inline const TElement& First() const
+	template<typename THashable, std::enable_if_t<std::is_pointer_v<THashable>, bool> = true>
+	SizeT Hash(THashable Hashable)
 	{
-		return *DataPtr.Get();
+		return reinterpret_cast<SizeT>(Hashable) % _buckets.Num();
 	}
 
-	inline TElement& operator[](UInt32 Index)
+    template<typename THashable, std::enable_if_t<std::is_base_of_v<CHashable, THashable>, bool> = true>
+    SizeT Hash(const THashable& Hashable) 
 	{
-		TElement* Element = DataPtr.Get() + Index;
+        static_assert(std::is_base_of_v<CHashable, THashable>, "THashable type must implement CHashable");
 
-		return *Element;
-	}
+        return Hashable.Hash() % _buckets.Num();
+    }
 
-	inline TElement* begin()
-	{
-		return DataPtr.Raw();
-	}
-
-	inline TElement* end()
-	{
-		return DataPtr + ItemNum;
-	}
-};
+private:
+    TArray<TBucket> _buckets;
+    SizeT _size = 0;
+};  

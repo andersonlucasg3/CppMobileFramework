@@ -1,5 +1,7 @@
 #include "SharedPtrTests.h"
 
+#include "Assert.h"
+
 #include "SmartPointer/SharedPointer.h"
 #include "SmartPointer/WeakPointer.h"
 #include "SmartPointer/MakeAndCasts.h"
@@ -26,8 +28,8 @@ void CSharedPtrTests::TestCase()
 {
     TSharedPtr<int> NullSharedPtr;
 
-    assert(NullSharedPtr == nullptr);
-    assert(!NullSharedPtr);
+    ASSERT_EQUAL(NullSharedPtr, nullptr);
+    ASSERT_FALSE(NullSharedPtr);
 
     int *SharedPtr = nullptr;
 
@@ -35,44 +37,44 @@ void CSharedPtrTests::TestCase()
         TSharedPtr<int> SharedIntPtr = MakeShared<int>();
         SharedPtr = SharedIntPtr.Raw();
 
-        assert(*SharedIntPtr == 0);
-        assert(SharedIntPtr);
-        assert(*SharedIntPtr == 0);
+        ASSERT_EQUAL(*SharedIntPtr, 0);
+        ASSERT_TRUE(SharedIntPtr);
+        ASSERT_EQUAL(*SharedIntPtr, 0);
 
         *SharedIntPtr = 10;
 
-        assert(*SharedIntPtr == 10);
+        ASSERT_EQUAL(*SharedIntPtr, 10);
 
         *SharedIntPtr = 20;
 
-        assert(*SharedIntPtr == 20);
+        ASSERT_EQUAL(*SharedIntPtr, 20);
 
-        assert(SharedIntPtr.RefCount() == 1);
+        ASSERT_EQUAL(SharedIntPtr.RefCount(), 1);
 
         {
             TSharedPtr<int> CopySharedIntPtr = SharedIntPtr;
 
-            assert(SharedIntPtr == CopySharedIntPtr);
+            ASSERT_EQUAL(SharedIntPtr, CopySharedIntPtr);
 
-            assert(CopySharedIntPtr.RefCount() == 2);
+            ASSERT_EQUAL(CopySharedIntPtr.RefCount(), 2);
         }
 
-        assert(SharedIntPtr.RefCount() == 1);
+        ASSERT_EQUAL(SharedIntPtr.RefCount(), 1);
     }
 
     // testing inheritance
 
     TSharedPtr<ITestType> TestTypePtr = MakeShared<CTestType>();
 
-    assert(TestTypePtr);
+    ASSERT_TRUE(TestTypePtr);
 
     // testing equality
 
     TSharedPtr<CTestType> OtherTestTypePtr = StaticCastSharedPtr<CTestType>(TestTypePtr);
 
-    assert(OtherTestTypePtr->MyTestMethod() == 1234);
+    ASSERT_EQUAL(OtherTestTypePtr->MyTestMethod(), 1234);
 
-    assert(TestTypePtr == OtherTestTypePtr);
+    ASSERT_EQUAL(TestTypePtr, OtherTestTypePtr);
 
     // testing assertion
 
@@ -85,8 +87,8 @@ void CSharedPtrTests::TestCase()
     TWeakPtr<int> WeakPtr2;
     TWeakPtr<int> WeakPtr3;
 
-    assert(!WeakPtr1);
-    assert(WeakPtr1 == nullptr);
+    ASSERT_FALSE(WeakPtr1);
+    ASSERT_EQUAL(WeakPtr1, nullptr);
 
     {
         TSharedPtr<int> TempPtr = MakeShared<int>(20);
@@ -95,14 +97,14 @@ void CSharedPtrTests::TestCase()
         WeakPtr2 = TempPtr;
         WeakPtr3 = WeakPtr2;
 
-        assert(WeakPtr1);
-        assert(WeakPtr1 == TempPtr);
-        assert(*WeakPtr1 == 20);
+        ASSERT_TRUE(WeakPtr1);
+        ASSERT_EQUAL(WeakPtr1, TempPtr);
+        ASSERT_EQUAL(*WeakPtr1, 20);
     }
 
-    assert(!WeakPtr1);
-    assert(!WeakPtr2);
-    assert(!WeakPtr3);
+    ASSERT_FALSE(WeakPtr1);
+    ASSERT_FALSE(WeakPtr2);
+    ASSERT_FALSE(WeakPtr3);
 
     TWeakPtr<CTestType> WeakObject = OtherTestTypePtr;
 

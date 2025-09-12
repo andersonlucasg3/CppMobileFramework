@@ -44,14 +44,14 @@ public:
         _link = nullptr;
     }
 
-    TObject* Get()
+    TObject* Get() const
     {
         SScopeLock Lock(_criticalSection);
 
         return _object;
     }
 
-    TObjectPtr& operator=(CObject* NewObject)
+    TObjectPtr& operator=(TObject* NewObject)
     {
         SScopeLock Lock(_criticalSection);
 
@@ -75,12 +75,12 @@ public:
         return *this;
     }
 
-    operator TObject*()
+    operator TObject*() const
     {
         return Get();
     }
 
-    TObject* operator->()
+    TObject* operator->() const
     {
         return Get();
     }

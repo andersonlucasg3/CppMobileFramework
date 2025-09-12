@@ -16,7 +16,7 @@
 
 CMacHttpRequestManager GMacHttpRequestManager;
 
-void CMacHttpRequestManager::URLSessionDidBecomeInvalidWithError(URLSession *session, Error *error)
+void CMacHttpRequestManager::URLSessionDidBecomeInvalidWithError(URLSession*, Error* error)
 {
     CHttpRequestError RequestError;
 
@@ -27,11 +27,11 @@ void CMacHttpRequestManager::URLSessionDidBecomeInvalidWithError(URLSession *ses
     // SendErrorCallback(RequestError);
 }
 
-void CMacHttpRequestManager::URLSessionTaskDidCompleteWithError(URLSession* session, URLSessionTask* task, Error* error)
+void CMacHttpRequestManager::URLSessionTaskDidCompleteWithError(URLSession*, URLSessionTask* task, Error* error)
 {
-    if (CMacHttpRequestPtr* RequestPtr = _requestsMap.Find(task->hash()))
+    if (CMacHttpRequestObjectPtr* RequestPtr = _requestsMap.Find(task->hash()))
     {
-        CMacHttpRequestPtr Request = *RequestPtr;
+        CMacHttpRequest* Request = *RequestPtr;
 
         if (error != nullptr)
         {
@@ -51,23 +51,22 @@ void CMacHttpRequestManager::URLSessionTaskDidCompleteWithError(URLSession* sess
     }
 }
 
-void CMacHttpRequestManager::URLSessionDataTaskDidReceiveData(URLSession* session, URLSessionDataTask* dataTask, Data* data)
+void CMacHttpRequestManager::URLSessionDataTaskDidReceiveData(URLSession*, URLSessionDataTask* dataTask, Data* data)
 {
-    if (CMacHttpRequestPtr* RequestPtr = _requestsMap.Find(dataTask->hash()))
+    if (CMacHttpRequestObjectPtr* RequestPtr = _requestsMap.Find(dataTask->hash()))
     {
-        CMacHttpRequestPtr Request = *RequestPtr;
+        CMacHttpRequest* Request = *RequestPtr;
 
         Request->_response.AppendResponse(TArray<UInt8>(reinterpret_cast<UInt8*>(data->mutableBytes()), data->length()));
     }
 }
 
-void CMacHttpRequestManager::URLSessionDataTaskDidReceiveResponse(URLSession* session, URLSessionDataTask* dataTask, URLResponse* response, const URLSessionDataTaskDidReceiveResponseCompletionHandler& completionHandler)
+void CMacHttpRequestManager::URLSessionDataTaskDidReceiveResponse(URLSession*, URLSessionDataTask*, URLResponse*, const URLSessionDataTaskDidReceiveResponseCompletionHandler& completionHandler)
 {
-    
     completionHandler(URLSessionResponseAllow);
 }
 
-void CMacHttpRequestManager::URLSessionTaskDidReceiveInformationalResponse(URLSession* session, URLSessionTask* task, HTTPURLResponse* response)
+void CMacHttpRequestManager::URLSessionTaskDidReceiveInformationalResponse(URLSession*, URLSessionTask*, HTTPURLResponse*)
 {
     
 }
@@ -79,14 +78,14 @@ CMacHttpRequestManager::CMacHttpRequestManager()
     // TODO: _urlSession->setDelegate() here
 }
 
-CHttpRequestPtr CMacHttpRequestManager::CreateRequest()
+CHttpRequest* CMacHttpRequestManager::CreateRequest()
 {
-    CMacHttpRequestPtr MacRequest = MakeShared<CMacHttpRequest>();
+    CMacHttpRequest* MacRequest = new CMacHttpRequest();
     MacRequest->SetURLSession(_urlSession);
     return MacRequest;
 }
 
-void CMacHttpRequestManager::AddRequest(URLSessionTask* InTask, const CMacHttpRequestPtr& InRequest)
+void CMacHttpRequestManager::AddRequest(URLSessionTask* InTask, CMacHttpRequest* InRequest)
 {
     _requestsMap.Add(InTask->hash(), InRequest);
 }

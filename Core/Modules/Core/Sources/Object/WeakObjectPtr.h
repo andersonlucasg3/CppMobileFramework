@@ -14,13 +14,13 @@ template<typename TObject = CObject>
 class TWeakObjectPtr
 {
 public:
-    TWeakObjectPtr()
+    inline TWeakObjectPtr()
     :   _object(nullptr)
     {
         //
     }
 
-    TWeakObjectPtr(TObject* Object)
+    inline TWeakObjectPtr(TObject* Object)
     :   _object(Object)
     {
         _handle = GObjectCollector.AddOnObjectCollectedListener(_object, [this]()
@@ -31,7 +31,7 @@ public:
         });
     }
 
-    TWeakObjectPtr(const TWeakObjectPtr& Weak)
+    inline TWeakObjectPtr(const TWeakObjectPtr& Weak)
     {
         _object = Weak;
         _handle = GObjectCollector.AddOnObjectCollectedListener(_object, [this]()
@@ -43,9 +43,11 @@ public:
     }
 
     template<typename TOtherObject = CObject>
-    TWeakObjectPtr(const TObjectPtr<TOtherObject>& ObjectPtr)
+    inline TWeakObjectPtr(const TObjectPtr<TOtherObject>& ObjectPtr)
     {
-        _object = ObjectPtr;
+        static_assert(std::is_base_of_v<CObject, TOtherObject>);
+
+        _object = static_cast<TOtherObject*>(ObjectPtr._object);
         _handle = GObjectCollector.AddOnObjectCollectedListener(_object, [this]
         {
             SScopeLock Lock(_criticalSection);
@@ -54,13 +56,13 @@ public:
         });
     }
 
-    ~TWeakObjectPtr()
+    inline ~TWeakObjectPtr()
     {
         GObjectCollector.RemoveOnObjectCollectedListener(_object, _handle);
         _object = nullptr;
     }
 
-    TWeakObjectPtr& operator=(TObject* Object)
+    inline TWeakObjectPtr& operator=(TObject* Object)
     {
         SScopeLock Lock(_criticalSection);
 
@@ -77,13 +79,13 @@ public:
         return *this;
     }
 
-    TWeakObjectPtr& operator=(const TWeakObjectPtr& Weak)
+    inline TWeakObjectPtr& operator=(const TWeakObjectPtr& Weak)
     {
         SScopeLock Lock(_criticalSection);
 
         GObjectCollector.RemoveOnObjectCollectedListener(_object, _handle);
 
-        _object = Weak;
+        _object = Weak._object;
         _handle = GObjectCollector.AddOnObjectCollectedListener(_object, [this]()
         {
             SScopeLock Lock(_criticalSection);
@@ -94,14 +96,14 @@ public:
         return *this;
     }
 
-    bool IsValid()
+    inline bool IsValid() const
     {
         SScopeLock Lock(_criticalSection);
 
         return _object != nullptr && !_object->IsQueuedForDestruction();
     }
 
-    TObject* Get()
+    inline TObject* Get() const
     {
         SScopeLock Lock(_criticalSection);
 

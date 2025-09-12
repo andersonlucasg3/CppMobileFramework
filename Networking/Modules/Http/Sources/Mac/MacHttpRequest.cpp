@@ -1,6 +1,5 @@
 #include "MacHttpRequest.h"
 
-#include "SmartPointer/MakeAndCasts.h"
 #include "String/Apple/AppleStringConvertion.h"
 
 #include "Mac/MacHttpRequestManager.h"
@@ -22,8 +21,7 @@ void CMacHttpRequest::Process()
 
     URLSessionDataTask* DataTask = _urlSession->dataTask(Url);
 
-    CMacHttpRequestPtr Shared = StaticCastSharedPtr<CMacHttpRequest>(AsShared());
-    GMacHttpRequestManager.AddRequest(DataTask, Shared);
+    GMacHttpRequestManager.AddRequest(DataTask, this);
 
     DataTask->resume();
 }

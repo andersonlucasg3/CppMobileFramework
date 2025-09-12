@@ -1,13 +1,16 @@
 #pragma once
 
 #include "Filesystem/FileReference.h"
+
+#include "SmartPointer/SharedFromThis.h"
+
 #include "Object/ClassMacros.h"
 
 #include "NSSharedPtr.hpp"
 #include "NSString.h"
 #include "URL/NSURL.h"
 
-DECLARE_CLASS_HEADER(AppleFileReference);
+FORWARD_DECLARE_SHARED(AppleFileReference);
 
 class CAppleFileReference : public CFileReference
 {

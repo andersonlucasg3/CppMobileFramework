@@ -1,6 +1,7 @@
 #pragma once
 
 #include "LinkedList.h"
+#include "Templates/Functions.h"
 
 template<typename TElement>
 class TQueue : private TLinkedList<TElement>
@@ -8,30 +9,30 @@ class TQueue : private TLinkedList<TElement>
 	using Super = TLinkedList<TElement>;
 
 public:
-	TQueue() : Super()
+	inline TQueue() : Super()
 	{
 		
 	}
 
-	TQueue(const TElement& Element) : 
+	inline TQueue(const TElement& Element) : 
 		Super(Element)
 	{
 		
 	}
 
-	~TQueue() override = default;
+	inline ~TQueue() override = default;
 
-	UInt32 Num() override
+	inline UInt32 Num() override
 	{
 		return Super::Num();
 	}
 
-	void Enqueue(const TElement& Element)
+	inline void Enqueue(const TElement& Element)
 	{
 		Super::Add(Element);
 	}
 
-	bool Dequeue(TElement& OutElement)
+	inline bool Dequeue(TElement& OutElement)
 	{
 		// Empty queue
 		if (IsEmpty()) return false;
@@ -54,7 +55,7 @@ public:
 		return true;
 	}
 
-	bool Peak(TElement& OutElement)
+	inline bool Peak(TElement& OutElement)
 	{
 		if (!IsEmpty())
 		{
@@ -66,13 +67,28 @@ public:
 		return false;
 	}
 
-	bool Contains(const TElement& Element)
+	inline bool Contains(const TElement& Element)
 	{
 		return Super::Contains(Element);
 	}
 
-	bool IsEmpty()
+	inline bool IsEmpty() const
 	{
 		return Super::IsEmpty();
+	}
+
+	inline void ForEach(const TFunction<void(const TElement&)>& Func) const
+	{
+		Super::ForEach(Func);
+	}
+
+	inline void ForEach(const TFunction<void(TElement&)>& Func)
+	{
+		Super::ForEach(Func);
+	}
+
+	inline void RemoveAll()
+	{
+		Super::RemoveAll();
 	}
 };

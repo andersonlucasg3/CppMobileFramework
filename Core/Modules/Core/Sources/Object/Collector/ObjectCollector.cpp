@@ -283,7 +283,7 @@ void CObjectCollector::CollectGarbage()
 
 	DestroyQueued();
 
-	Marked.RemoveAll(false);
+	Marked.RemoveAll();
 
 	_bIsGarbageCollecting = false;
 }
@@ -292,10 +292,10 @@ void CObjectCollector::DestroyQueued()
 {
 	SScopeLock DestructionLock(_destructionQueueCriticalSection);
 
-	for (CObject* Object : _destructionQueue)
+	_destructionQueue.ForEach([this](CObject* Object)
 	{
 		DestroyObject(Object);
-	}
+	});
 
 	_destructionQueue.RemoveAll();
 }

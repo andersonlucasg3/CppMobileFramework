@@ -8,11 +8,11 @@
 
 #include "URLSession/NSURLSessionDataDelegate.h"
 
-DECLARE_CLASS_HEADER(MacHttpRequest);
+FORWARD_DECLARE_OBJECT(MacHttpRequest);
 
 using namespace NS;
 
-class CMacHttpRequest : public CHttpRequest, public URLSessionDataDelegate
+class CMacHttpRequest : public CHttpRequest, protected URLSessionDataDelegate
 {
     using Super = CHttpRequest;
 

@@ -23,7 +23,7 @@ public:
 
     ~CRequestCallbacks() override = default;
 
-    void HttpRequestFailedWithError(const CHttpRequestPtr& InRequest, const CHttpRequestError& InError) override
+    void HttpRequestFailedWithError(CHttpRequest*, const CHttpRequestError& InError) override
     {
         GLogger.Log("Request Error: {}, Message: {}", ToString(InError.Error), *InError.Message);
 
@@ -31,7 +31,7 @@ public:
     }
 
     
-    void HttpRequestSucceeded(const CHttpRequestPtr& InRequest, const CHttpResponse& InResponse) override 
+    void HttpRequestSucceeded(CHttpRequest*, const CHttpResponse& InResponse) override
     {
         GLogger.Log("Status: {}, Response: {}", InResponse.Status(), *InResponse.ResponseString());
         
@@ -45,7 +45,7 @@ void CHttpRequestTests::TestCase()
 
     SSemaphore RequestSemaphore;
 
-    CHttpRequestPtr Request = GHttpRequestManager.CreateRequest();
+    CHttpRequest* Request = GHttpRequestManager.CreateRequest();
     
     Request->SetEndpoint("https://jsonplaceholder.typicode.com/todos/1")
         .SetMethod(EHttpRequestMethod::Get)

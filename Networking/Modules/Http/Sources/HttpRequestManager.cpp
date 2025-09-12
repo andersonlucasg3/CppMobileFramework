@@ -2,27 +2,32 @@
 
 #include "Defines/Preprocessors.h"
 
-#include "HttpRequest.h"
 #include "Threading/ScopeLock.h"
 #include "Threading/Thread.h"
+
+#include "Object/Collector/CollectorScope.h"
+
+#include "HttpRequest.h"
 
 #include COMPILE_PLATFORM_HEADER(HttpRequestManager.h)
 
 static CPlatformHttpRequestManager GPlatformHttpRequestManager;
 CHttpRequestManager& GHttpRequestManager = GPlatformHttpRequestManager;
 
-void CHttpRequestManager::ThreadWorker(const CThreadWeakPtr& Thread)
+void CHttpRequestManager::ThreadWorker(const CThreadWeakObjectPtr& Thread)
 {
+    if (!Thread.IsValid()) return;
+
     SScopeLock ScopeLock(_pendingRequestsCS);
 
     if (_pendingRequests.IsEmpty())
     {
-        Thread->Sleep(100);
+        Thread.Get()->Sleep(100);
 
         return;
     }
 
-    CHttpRequestPtr Request;
+    CHttpRequestObjectPtr Request;
     while (_pendingRequests.Dequeue(Request))
     {
         Request->Process();
@@ -47,8 +52,9 @@ void CHttpRequestManager::StartRequestWorker()
 
     if (_httpThread->IsRunning()) return;
 
-    _httpThread->Start([this](const CThreadWeakPtr& Thread)
+    _httpThread->Start([this](const CThreadWeakObjectPtr& Thread)
     {
+        SCollectorScope Scope;
         ThreadWorker(Thread);
     });
 }
@@ -66,7 +72,7 @@ void CHttpRequestManager::StopRequestWorker()
     _httpThread = nullptr;
 }
 
-void CHttpRequestManager::AddRequest(const CHttpRequestPtr& InRequest)
+void CHttpRequestManager::AddRequest(CHttpRequest* InRequest)
 {
     SScopeLock ScopeLock(_pendingRequestsCS);
     

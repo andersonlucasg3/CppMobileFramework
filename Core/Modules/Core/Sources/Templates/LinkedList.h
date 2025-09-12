@@ -16,6 +16,7 @@ struct TNode
 	TNode(const TValue& Value) :
 		Value(Value)
 	{
+        //
 	}
 };
 
@@ -26,24 +27,18 @@ public:
     using TNodeElement = TNode<TElement>;
 	using TNodePtr = TNodeElement*;
 
-private:
-    TNodePtr _head = nullptr;
-	TNodePtr _tail = nullptr;
-	UInt32 _currentNum = 0;
-
-public:
-	TLinkedList()
+	inline TLinkedList()
     {
         _head = nullptr;
 		_tail = nullptr;
     }
 
-    TLinkedList(const TElement& Element)
+    inline TLinkedList(const TElement& Element)
     {
         Add(Element);
     }
 
-    TLinkedList(const TLinkedList& Other) :
+    inline TLinkedList(const TLinkedList& Other) :
         TLinkedList()
     {
         Other.ForEach([this](const TElement& Each)
@@ -52,37 +47,37 @@ public:
         });
     }
 
-    virtual ~TLinkedList()
+    inline virtual ~TLinkedList()
     {
         RemoveAll();
     }
 
-    virtual UInt32 Num()
+    inline virtual UInt32 Num()
     {
         return _currentNum;
     }
 
-    TNodePtr Head()
+    inline TNodePtr Head()
     {
         return _head;
     }
 
-    TNodePtr Tail()
+    inline TNodePtr Tail()
     {
         return _tail;
     }
 
-    TElement& First()
+    inline TElement& First()
     {
         return _head->Value;
     }
 
-    TElement& Last()
+    inline TElement& Last()
     {
         return _tail->Value;
     }
 
-    TNodePtr Add(const TElement& Element)
+    inline TNodePtr Add(const TElement& Element)
     {
         ++_currentNum;
 
@@ -103,7 +98,7 @@ public:
         return NewTailPtr;
     }
 
-    bool Remove(TNodePtr NodePtr)
+    inline bool Remove(TNodePtr NodePtr)
     {
         if (IsEmpty() || NodePtr == nullptr) return false;
         
@@ -151,17 +146,17 @@ public:
         return true;
     }
 
-    bool RemoveFirst()
+    inline bool RemoveFirst()
     {
         return Remove(_head);
     }
 
-    bool RemoveLast()
+    inline bool RemoveLast()
     {
         return Remove(_tail);
     }
 
-    void Remove(const TElement& Element)
+    inline void Remove(const TElement& Element)
 	{
 		TNodePtr Current = _head;
 		while (Current != nullptr)
@@ -177,12 +172,16 @@ public:
 		}
 	}
 
-    void RemoveAll()
+    inline void RemoveAll()
     {
+        if (_currentNum == 0) return;
+
         while (RemoveFirst());
+        
+        _currentNum = 0;
     }
 
-    bool Contains(const TElement& Element)
+    inline bool Contains(const TElement& Element)
     {
         TNodePtr Current = _head;
 		while (Current != nullptr)
@@ -198,12 +197,12 @@ public:
 		return false;
     }
 
-    bool IsEmpty()
+    inline bool IsEmpty() const
 	{
 		return _head == nullptr;
 	}
     
-    void ForEach(const TFunction<void(const TElement&)>& EachFunc) const
+    inline void ForEach(const TFunction<void(const TElement&)>& EachFunc) const
     {
         TNodePtr Current = _head;
 		while (Current != nullptr)
@@ -214,7 +213,7 @@ public:
 		}
     }
 
-    void ForEach(const TFunction<void(TElement&)>& EachFunc)
+    inline void ForEach(const TFunction<void(TElement&)>& EachFunc)
     {
         TNodePtr Current = _head;
 		while (Current != nullptr)
@@ -225,7 +224,7 @@ public:
 		}
     }
 
-    TLinkedList& operator=(const TLinkedList& Other)
+    inline TLinkedList& operator=(const TLinkedList& Other)
     {
         Other.ForEach([this](const TElement& Each)
         {
@@ -233,4 +232,9 @@ public:
         });
         return *this;
     }
+
+private:
+    TNodePtr _head = nullptr;
+	TNodePtr _tail = nullptr;
+	UInt32 _currentNum = 0;
 };

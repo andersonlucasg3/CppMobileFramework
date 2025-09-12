@@ -1,19 +1,21 @@
 #pragma once
 
 #include "Defines/Types.h"
-#include "HttpResponse.h"
+
 #include "Templates/Map.h"
 
 #include "SmartPointer/SharedFromThis.h"
 
+#include "Object/Object.h"
 #include "Object/ClassMacros.h"
 
 #include "String/String.h"
 
+#include "HttpResponse.h"
 #include "HttpRequestError.h"
 
-DECLARE_CLASS_HEADER(HttpRequest);
-DECLARE_CLASS_HEADER(HttpRequestCallbacks);
+FORWARD_DECLARE_OBJECT(HttpRequest);
+FORWARD_DECLARE_SHARED(HttpRequestCallbacks);
 
 enum class EHttpRequestMethod : UInt8
 {
@@ -30,12 +32,12 @@ class CHttpRequestCallbacks
 public:
     HTTP_API virtual ~CHttpRequestCallbacks() = default;
 
-    HTTP_API virtual void HttpRequestFailedWithError(const CHttpRequestPtr& InRequest, const CHttpRequestError& InError) = 0;
+    HTTP_API virtual void HttpRequestFailedWithError(CHttpRequest* InRequest, const CHttpRequestError& InError) = 0;
     // TODO: instead implement a response object with status and additional response information
-    HTTP_API virtual void HttpRequestSucceeded(const CHttpRequestPtr& InRequest, const CHttpResponse& InResponse) = 0;
+    HTTP_API virtual void HttpRequestSucceeded(CHttpRequest* InRequest, const CHttpResponse& InResponse) = 0;
 };
 
-class CHttpRequest : public TSharedFromThis<CHttpRequest>
+class CHttpRequest : public CObject
 {
     CString _endpoint;
     EHttpRequestMethod _method;

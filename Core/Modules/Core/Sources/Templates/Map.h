@@ -31,47 +31,6 @@ class TMap
 {
 	using TKeyValuePair = TKeyValuePair<TKey, TValue>;
 	using TBucket = TLinkedList<TKeyValuePair>;
-
-	TArray<TBucket> _buckets;
-	SizeT _size = 0;
-
-    template<typename THashableKey, std::enable_if_t<std::is_integral_v<THashableKey> || std::is_enum_v<THashableKey>, bool> = true>
-    SizeT Hash(const THashableKey& Key) 
-	{
-		return static_cast<SizeT>(Key) % _buckets.Num();
-    }
-
-	template<typename THashableKey, std::enable_if_t<std::is_pointer_v<THashableKey>, bool> = true>
-	SizeT Hash(THashableKey Key)
-	{
-		return reinterpret_cast<SizeT>(Key) % _buckets.Num();
-	}
-
-    template<typename THashableKey, std::enable_if_t<std::is_base_of_v<CHashable, THashableKey>, bool> = true>
-    SizeT Hash(const THashableKey& Key) 
-	{
-        static_assert(std::is_base_of_v<CHashable, THashableKey>, "For being a Key to TMap, TKey type must implement CHashable");
-
-        return Key.Hash() % _buckets.Num();
-    }
-
-	void ResizeIfNeeded()
-	{
-		if (_size > _buckets.Num() * 0.75f)
-		{
-			TArray<TBucket> OldBuckets = _buckets;
-			_buckets = TArray<TBucket>(OldBuckets.Num() * 2, true);
-			
-			for (const TBucket& Bucket : OldBuckets)
-			{
-				Bucket.ForEach([this](const TKeyValuePair& Pair)
-				{
-					SizeT NewIndex = Hash(Pair.Key); // doing against new bucket
-					_buckets[NewIndex].Add(Pair);
-				});
-			}
-		}
-	}
 	
 public:
 	TMap() : _buckets(16, true)
@@ -173,6 +132,8 @@ public:
 
 	void RemoveAll()
 	{
+		if (_size == 0) return;
+
 		_buckets.ForEach([](TBucket& Bucket)
 		{
 			Bucket.RemoveAll();
@@ -226,4 +187,46 @@ public:
 	{
 		return static_cast<TNum>(_size);
 	}
+
+private:
+	TArray<TBucket> _buckets;
+	SizeT _size = 0;
+
+	void ResizeIfNeeded()
+	{
+		if (_size > _buckets.Num() * 0.75f)
+		{
+			TArray<TBucket> OldBuckets = _buckets;
+			_buckets = TArray<TBucket>(OldBuckets.Num() * 2, true);
+			
+			for (const TBucket& Bucket : OldBuckets)
+			{
+				Bucket.ForEach([this](const TKeyValuePair& Pair)
+				{
+					SizeT NewIndex = Hash(Pair.Key); // doing against new bucket
+					_buckets[NewIndex].Add(Pair);
+				});
+			}
+		}
+	}
+
+    template<typename THashableKey, std::enable_if_t<std::is_integral_v<THashableKey> || std::is_enum_v<THashableKey>, bool> = true>
+    SizeT Hash(const THashableKey& Key) 
+	{
+		return static_cast<SizeT>(Key) % _buckets.Num();
+    }
+
+	template<typename THashableKey, std::enable_if_t<std::is_pointer_v<THashableKey>, bool> = true>
+	SizeT Hash(THashableKey Key)
+	{
+		return reinterpret_cast<SizeT>(Key) % _buckets.Num();
+	}
+
+    template<typename THashableKey, std::enable_if_t<std::is_base_of_v<CHashable, THashableKey>, bool> = true>
+    SizeT Hash(const THashableKey& Key) 
+	{
+        static_assert(std::is_base_of_v<CHashable, THashableKey>, "For being a Key to TMap, TKey type must implement CHashable");
+
+        return Key.Hash() % _buckets.Num();
+    }
 };
