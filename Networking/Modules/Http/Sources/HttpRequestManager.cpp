@@ -18,19 +18,17 @@ void CHttpRequestManager::ThreadWorker(const CThreadWeakObjectPtr& Thread)
 {
     if (!Thread.IsValid()) return;
 
-    SScopeLock ScopeLock(_pendingRequestsCS);
-
     if (_pendingRequests.IsEmpty())
     {
-        Thread.Get()->Sleep(100);
-
-        return;
+        _processQueueSemaphore.Wait();
     }
 
-    CHttpRequestObjectPtr Request;
-    while (_pendingRequests.Dequeue(Request))
+    CHttpRequestObjectPtr Request = DequeueRequest();
+    while (Request.IsValid())
     {
         Request->Process();
+
+        Request = DequeueRequest();
     }
 }
 
@@ -47,10 +45,12 @@ CHttpRequestManager::~CHttpRequestManager()
 
 void CHttpRequestManager::StartRequestWorker()
 {
-    // TODO: implement a SharedPtr with thread safety abstraction so we don't need this
-    SScopeLock ScopeLock(_httpThreadCS);
+    if (_httpThread->IsRunning()) 
+    {
+        _processQueueSemaphore.NotifyOne();
 
-    if (_httpThread->IsRunning()) return;
+        return;
+    }
 
     _httpThread->Start([this](const CThreadWeakObjectPtr& Thread)
     {
@@ -61,9 +61,6 @@ void CHttpRequestManager::StartRequestWorker()
 
 void CHttpRequestManager::StopRequestWorker()
 {
-    // TODO: implement a SharedPtr with thread safety abstraction so we don't need this
-    SScopeLock ScopeLock(_httpThreadCS); 
-
     if (!_httpThread || !_httpThread->IsRunning()) return;
 
     _httpThread->Exit();
@@ -79,4 +76,13 @@ void CHttpRequestManager::AddRequest(CHttpRequest* InRequest)
     _pendingRequests.Enqueue(InRequest);
 
     StartRequestWorker();
+}
+
+CHttpRequestObjectPtr CHttpRequestManager::DequeueRequest()
+{
+    SScopeLock ScopeLock(_pendingRequestsCS);
+
+    CHttpRequestObjectPtr Request;
+    _pendingRequests.Dequeue(Request);
+    return Request;
 }

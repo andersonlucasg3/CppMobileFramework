@@ -2,6 +2,7 @@
 
 #include "Object/Object.h"
 
+#include "Threading/Semaphore.h"
 #include "Threading/Thread.h"
 #include "Threading/CriticalSection.h"
 
@@ -21,14 +22,15 @@ public:
     HTTP_API void AddRequest(CHttpRequest* InRequest);
 
 private:
-    SCriticalSection _httpThreadCS;
+    SSemaphore _processQueueSemaphore;
     CThreadObjectPtr _httpThread;
 
     SCriticalSection _pendingRequestsCS;
-    
     TQueue<CHttpRequestObjectPtr> _pendingRequests;
 
     void ThreadWorker(const CThreadWeakObjectPtr& Thread);
+
+    CHttpRequestObjectPtr DequeueRequest();
 };
 
 HTTP_API extern CHttpRequestManager& GHttpRequestManager;

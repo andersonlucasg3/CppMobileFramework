@@ -35,6 +35,9 @@ public:
     CORE_API static bool IsMainThread();
 
 protected:
+    CORE_API void ThreadStart(const CThreadWeakObjectPtr& Thread);
+    CORE_API void ThreadEnd();
+
     CORE_API virtual void StartInternal(const TFunction<void(const CThreadWeakObjectPtr&)>& ThreadFunc) = 0;
 
 private:

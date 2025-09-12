@@ -15,27 +15,27 @@ class TObjectPtr : public CReferencer
     using Super = CReferencer;
 
 public:
-    TObjectPtr()
+    inline TObjectPtr()
     :   Super(nullptr)
     {
         //
     }
 
-    TObjectPtr(TObject* Object)
+    inline TObjectPtr(TObject* Object)
     :   Super(nullptr)
     {
         _object = Object;
         _link = GObjectCollector.AddObjectLink(_object, this);
     }
 
-    TObjectPtr(const TObjectPtr& Other)
+    inline TObjectPtr(const TObjectPtr& Other)
     :   Super(nullptr)
     {
         _object = Other._object;
         _link = GObjectCollector.AddObjectLink(_object, this);
     }
 
-    ~TObjectPtr()
+    inline ~TObjectPtr()
     {
         SScopeLock Lock(_criticalSection);
 
@@ -44,14 +44,14 @@ public:
         _link = nullptr;
     }
 
-    TObject* Get() const
+    inline TObject* Get() const
     {
         SScopeLock Lock(_criticalSection);
 
         return _object;
     }
 
-    TObjectPtr& operator=(TObject* NewObject)
+    inline TObjectPtr& operator=(TObject* NewObject)
     {
         SScopeLock Lock(_criticalSection);
 
@@ -63,7 +63,7 @@ public:
         return *this;
     }
 
-    TObjectPtr& operator=(const TObjectPtr& Other)
+    inline TObjectPtr& operator=(const TObjectPtr& Other)
     {
         SScopeLock Lock(_criticalSection);
 
@@ -75,14 +75,19 @@ public:
         return *this;
     }
 
-    operator TObject*() const
+    inline operator TObject*() const
     {
         return Get();
     }
 
-    TObject* operator->() const
+    inline TObject* operator->() const
     {
         return Get();
+    }
+
+    inline bool IsValid() const
+    {
+        return Get() != nullptr;
     }
 
 private:
@@ -91,7 +96,7 @@ private:
 
     SCriticalSection _criticalSection;
 
-    void ReleaseLinks() override
+    inline void ReleaseLinks() override
     {
         SScopeLock Lock(_criticalSection);
 
@@ -99,7 +104,7 @@ private:
         _link = nullptr;
     }
 
-    void EnumerateLinks(const TFunction<void(CObjectLink*)>& InFunc) const override
+    inline void EnumerateLinks(const TFunction<void(CObjectLink*)>& InFunc) const override
     {
         SScopeLock Lock(_criticalSection);
         

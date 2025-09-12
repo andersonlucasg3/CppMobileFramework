@@ -38,15 +38,20 @@ void CMacThread::StartInternal(const TFunction<void(const CThreadWeakObjectPtr&)
     {
         _thread = MakeShared<std::thread>([this, ThreadFunc]
         {
-            pthread_setname_np(*_threadName.SubString(0, 15));
-            while(IsRunning())
+            ThreadStart(this);
             {
-                NS::AutoreleasePool* Pool = NS::AutoreleasePool::alloc()->init();
+                pthread_setname_np(*_threadName.SubString(0, 15));
 
-                ThreadFunc(this);
+                while(IsRunning())
+                {
+                    NS::AutoreleasePool* Pool = NS::AutoreleasePool::alloc()->init();
 
-                Pool->drain();
+                    ThreadFunc(this);
+
+                    Pool->drain();
+                }
             }
+            ThreadEnd();
         });
     }
 }

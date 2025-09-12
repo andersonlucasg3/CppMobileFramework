@@ -19,13 +19,8 @@ void CThread::Start(const TFunction<void(const CThreadWeakObjectPtr&)>& ThreadFu
 
     StartInternal([ThreadFunc](const CThreadWeakObjectPtr& Thread)
     {
-        GIsMainThread = false;
-        GCurrentThread = Thread;
-        {
-            SCollectorScope ThreadScope;
-            ThreadFunc(Thread);
-        }
-        GCurrentThread = nullptr;
+        SCollectorScope ThreadScope;
+        ThreadFunc(Thread);
     });
 }
 
@@ -54,4 +49,15 @@ CThread* CThread::Current()
 bool CThread::IsMainThread()
 {
     return GIsMainThread;
+}
+
+void CThread::ThreadStart(const CThreadWeakObjectPtr& Thread)
+{
+    GIsMainThread = false;
+    GCurrentThread = Thread;
+}
+
+void CThread::ThreadEnd()
+{
+    GCurrentThread = nullptr;
 }
