@@ -34,6 +34,7 @@ namespace NS::Private
         _NS_PRIVATE_DEF_CLS(NSURLSession);
         _NS_PRIVATE_DEF_CLS(NSURLRequest);
         _NS_PRIVATE_DEF_CLS(NSURLResponse);
+        _NS_PRIVATE_DEF_CLS(NSOperationQueue);
     }
 
     namespace Selector
@@ -251,5 +252,6 @@ namespace NS::Private
         _NS_PRIVATE_DEF_SEL(dataTaskWithURL_, "dataTaskWithURL:");
         _NS_PRIVATE_DEF_SEL(initWithURL_MIMEType_expectedContentLength_textEncodingName_, "initWithURL:MIMEType:expectedContentLength:textEncodingName:");
         _NS_PRIVATE_DEF_SEL(sessionWithConfiguration_, "sessionWithConfiguration:");
+        _NS_PRIVATE_DEF_SEL(sessionWithConfiguration_delegate_delegateQueue_, "sessionWithConfiguration:delegate:delegateQueue:");
     }
 }

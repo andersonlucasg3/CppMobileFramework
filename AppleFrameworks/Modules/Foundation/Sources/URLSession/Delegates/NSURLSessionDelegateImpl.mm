@@ -2,6 +2,8 @@
 
 #include "URL/NSURLAuthenticationChallenge.h"
 
+#include "URLSession/NSURLSession.h"
+
 using namespace NS;
 
 @implementation NSURLSessionDelegateImpl
@@ -51,3 +53,11 @@ using namespace NS;
 }
 
 @end
+
+namespace NS
+{
+    void* URLSession::CreateDelegate(URLSessionDelegate* delegate)
+    {
+        return [[NSURLSessionDelegateImpl alloc] initWithDelegate:delegate];
+    }
+}

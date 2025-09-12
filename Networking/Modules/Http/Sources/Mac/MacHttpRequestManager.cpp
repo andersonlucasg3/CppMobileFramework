@@ -3,6 +3,7 @@
 #include "HttpRequest.h"
 #include "Mac/MacHttpRequest.h"
 
+#include "OperationQueue.h"
 #include "String/Apple/AppleStringConvertion.h"
 
 #include "NSSharedPtr.hpp"
@@ -74,7 +75,8 @@ void CMacHttpRequestManager::URLSessionTaskDidReceiveInformationalResponse(URLSe
 CMacHttpRequestManager::CMacHttpRequestManager()
 :   Super()
 {
-    _urlSession = TransferPtr(URLSession::session(URLSessionConfiguration::defaultSessionConfiguration()));
+    OperationQueue* DelegateQueue = OperationQueue::alloc()->init(); // maybe I don't need this
+    _urlSession = TransferPtr(URLSession::session(URLSessionConfiguration::defaultSessionConfiguration(), this, DelegateQueue));
     // TODO: _urlSession->setDelegate() here
 }
 

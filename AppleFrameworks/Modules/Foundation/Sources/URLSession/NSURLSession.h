@@ -26,7 +26,11 @@ namespace NS
         FOUNDATION_API static URLSession* sharedSession();
 
         FOUNDATION_API static URLSession* session(class URLSessionConfiguration* configuration);
+        FOUNDATION_API static URLSession* session(class URLSessionConfiguration* configuration, class URLSessionDelegate* delegate, class OperationQueue* delegateQueue);
 
         FOUNDATION_API class URLSessionDataTask* dataTask(class URL* url);
+
+    private:
+        static void* CreateDelegate(class URLSessionDelegate* delegate);
     };
 }

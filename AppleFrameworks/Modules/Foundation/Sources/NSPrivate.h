@@ -65,6 +65,7 @@ namespace NS::Private
         _NS_PRIVATE_EXTERN_CLS(NSURLSessionDataTask);
         _NS_PRIVATE_EXTERN_CLS(NSURLRequest);
         _NS_PRIVATE_EXTERN_CLS(NSURLResponse);
+        _NS_PRIVATE_EXTERN_CLS(NSOperationQueue);
     }
 
     namespace Selector
@@ -281,5 +282,6 @@ namespace NS::Private
         _NS_PRIVATE_EXTERN_SEL(dataTaskWithURL_);
         _NS_PRIVATE_EXTERN_SEL(initWithURL_MIMEType_expectedContentLength_textEncodingName_);
         _NS_PRIVATE_EXTERN_SEL(sessionWithConfiguration_);
+        _NS_PRIVATE_EXTERN_SEL(sessionWithConfiguration_delegate_delegateQueue_);
     }
 }
