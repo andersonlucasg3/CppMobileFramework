@@ -1,7 +1,5 @@
 #pragma once
 
-#if PLATFORM_MACOS
-
 #include "Environment/Environment.h"
 
 class CAppleEnvironment : public CEnvironment
@@ -13,5 +11,3 @@ public:
 };
 
 typedef CAppleEnvironment CPlatformEnvironment;
-
-#endif
