@@ -1,12 +1,12 @@
-using Shared.Projects;
-using Shared.Platforms;
+using ProjectTools.Projects;
+using ProjectTools.Platforms;
 using TestSuit.Projects;
 using AppleFrameworks.Projects;
 
 namespace Core.Projects;
 
 using Modules;
-using Shared.Extensions;
+using ProjectTools.Extensions;
 
 public class CoreProject : AProjectDefinition
 {

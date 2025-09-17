@@ -51,8 +51,8 @@ public:
     dispatch_queue_t                  dispatchQueue() const;
 };
 
-using SharedEventNotificationBlock = void (^)(class SharedEvent* pEvent, std::uint64_t value);
-using SharedEventNotificationFunction = std::function<void(class SharedEvent* pEvent, std::uint64_t value)>;
+using ProjectToolsEventNotificationBlock = void (^)(class SharedEvent* pEvent, std::uint64_t value);
+using ProjectToolsEventNotificationFunction = std::function<void(class SharedEvent* pEvent, std::uint64_t value)>;
 
 class SharedEvent : public NS::Referencing<SharedEvent, Event>
 {

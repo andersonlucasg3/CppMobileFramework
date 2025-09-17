@@ -1,0 +1,1 @@
+./ProjectTools/Scripts/GenCodeProject.ps1

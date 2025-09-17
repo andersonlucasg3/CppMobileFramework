@@ -1,5 +1,5 @@
-using Shared.Projects;
-using Shared.Platforms;
+using ProjectTools.Projects;
+using ProjectTools.Platforms;
 using Core.Projects;
 
 namespace Networking.Projects;

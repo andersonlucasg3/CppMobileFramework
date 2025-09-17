@@ -1,5 +1,5 @@
-using Shared.Platforms;
-using Shared.Projects;
+using ProjectTools.Platforms;
+using ProjectTools.Projects;
 
 namespace Core.Modules;
 

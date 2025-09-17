@@ -1,7 +1,7 @@
 using AppleFrameworks.Foundation;
 using AppleFrameworks.Metal;
-using Shared.Platforms;
-using Shared.Projects;
+using ProjectTools.Platforms;
+using ProjectTools.Projects;
 
 namespace AppleFrameworks.Projects;
 
