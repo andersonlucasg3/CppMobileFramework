@@ -17,3 +17,5 @@ public:
     
     CORE_API const CString& CachesPath() const override;
 };
+
+typedef CApplePath CPlatformPath;

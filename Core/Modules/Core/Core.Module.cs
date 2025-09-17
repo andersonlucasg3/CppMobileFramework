@@ -8,10 +8,10 @@ public class CoreModule : AModuleDefinition
     public override string Name => "Core";
     public override EModuleBinaryType BinaryType => EModuleBinaryType.DynamicLibrary;
 
-    protected override void Configure()
+    protected override void Configure(ATargetPlatform InTargetPlatform)
     {
         AddDependencyModuleNames(
-            ETargetPlatform.macOS,
+            ETargetPlatformGroup.Apple,
             "Foundation"
         );
 

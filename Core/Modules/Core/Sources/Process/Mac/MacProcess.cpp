@@ -2,7 +2,7 @@
 
 #include "Filesystem/Path.h"
 
-const CMacProcess& GMacProcess = static_cast<const CMacProcess&>(GProcess);
+const CMacProcess& GAppleProcess = static_cast<const CMacProcess&>(GProcess);
 
 void CMacProcess::SetCommandLine(int argc, char* argv[])
 {
@@ -29,7 +29,7 @@ const TArray<CString>& CMacProcess::GetCommandLineArgs() const
     return CommandLineArgs;
 }
 
-bool CMacProcess::IsRunningOnAppBundle() const
+bool CMacProcess::IsRunningInsideAppBundle() const
 {
     return ExecutableContainerPath.EndsWith(".app");
 }

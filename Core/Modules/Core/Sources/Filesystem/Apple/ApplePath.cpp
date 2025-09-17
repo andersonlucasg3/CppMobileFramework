@@ -1,10 +1,12 @@
 #include "ApplePath.h"
 
+#include "Defines/Preprocessors.h"
+
 #include "Templates/Array.h"
 
-#include "Process/Mac/MacProcess.h"
-
 #include "String/Apple/AppleStringConvertion.h"
+
+#include COMPILE_PLATFORM_HEADER_FEATURE(Process, Process.h)
 
 #include "NSFileManager.h"
 #include "NSError.h"
@@ -54,7 +56,7 @@ const CString& CApplePath::CachesPath() const
 {
     static CString CachesPath = []
     {
-        if (GMacProcess.IsRunningOnAppBundle())
+        if (GAppleProcess.IsRunningInsideAppBundle())
         {
             NS::Error* Error = nullptr;
 
@@ -65,7 +67,7 @@ const CString& CApplePath::CachesPath() const
         else
         {
             return GPath.Combine({
-                GMacProcess.GetContainerPath(),
+                GAppleProcess.GetContainerPath(),
                 "Caches",
             });
         }

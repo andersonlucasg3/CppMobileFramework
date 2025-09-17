@@ -1,3 +1,4 @@
+using Shared.Platforms;
 using Shared.Projects;
 
 namespace AppleFrameworks.Foundation;
@@ -8,9 +9,9 @@ public class FoundationModule : AModuleDefinition
 
     public override string Name => "Foundation";
 
-    protected override void Configure()
+    protected override void Configure(ATargetPlatform InTargetPlatform)
     {
-        PlatformSpecifics.GetMac()
+        PlatformSpecifics.GetApple()
             .AddFrameworkDependencies("Foundation");
     }
 }

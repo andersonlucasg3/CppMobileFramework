@@ -9,6 +9,8 @@ protected:
 
 public:
     CORE_API virtual ~CMobileProcess() override = default;
+
+    CORE_API 
 };
 
 extern CMobileProcess& GMobileProcess;

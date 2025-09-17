@@ -9,7 +9,7 @@
 
 #include "HttpRequest.h"
 
-#include COMPILE_PLATFORM_HEADER(HttpRequestManager.h)
+#include COMPILE_PLATFORM_GROUP_HEADER(HttpRequestManager.h)
 
 static CPlatformHttpRequestManager GPlatformHttpRequestManager;
 CHttpRequestManager& GHttpRequestManager = GPlatformHttpRequestManager;

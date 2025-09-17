@@ -27,3 +27,5 @@ public:
     CORE_API NS::String* PathString() const;
     CORE_API NS::URL* PathURL() const;
 };
+
+typedef CAppleFileReference CPlatformFileReference;

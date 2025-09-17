@@ -5,7 +5,7 @@
 
 #include "HttpRequestError.h"
 
-#include COMPILE_PLATFORM_HEADER(HttpRequest.h)
+#include COMPILE_PLATFORM_GROUP_HEADER(HttpRequest.h)
 
 const char* ToString(EHttpRequestMethod InMethod)
 {

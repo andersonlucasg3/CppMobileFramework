@@ -4,7 +4,7 @@
 
 #include "Filesystem/Path.h"
 
-#include COMPILE_PLATFORM_HEADER(DirectoryReference.h)
+#include COMPILE_PLATFORM_GROUP_HEADER(DirectoryReference.h)
 
 #include <filesystem>
 

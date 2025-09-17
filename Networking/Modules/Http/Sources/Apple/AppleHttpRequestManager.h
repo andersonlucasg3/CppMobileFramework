@@ -4,7 +4,7 @@
 
 #include "HttpRequest.h"
 #include "HttpRequestManager.h"
-#include "Mac/MacHttpRequest.h"
+#include "AppleHttpRequest.h"
 
 #include "NSSharedPtr.hpp"
 
@@ -13,13 +13,13 @@
 
 using namespace NS;
 
-class CMacHttpRequestManager : public CHttpRequestManager, public URLSessionDataDelegate
+class CAppleHttpRequestManager : public CHttpRequestManager, public URLSessionDataDelegate
 {
     using Super = CHttpRequestManager;
 
     SharedPtr<URLSession> _urlSession;
 
-    TMap<Integer, CMacHttpRequestObjectPtr> _requestsMap;
+    TMap<Integer, CAppleHttpRequestObjectPtr> _requestsMap;
 
 protected:
     HTTP_API void URLSessionDidBecomeInvalidWithError(URLSession* Session, Error* error) override;
@@ -29,14 +29,14 @@ protected:
     HTTP_API void URLSessionTaskDidReceiveInformationalResponse(URLSession* session, URLSessionTask* task, HTTPURLResponse* response) override;
 
 public:
-    HTTP_API CMacHttpRequestManager();
-    HTTP_API ~CMacHttpRequestManager() override = default;
+    HTTP_API CAppleHttpRequestManager();
+    HTTP_API ~CAppleHttpRequestManager() override = default;
 
     HTTP_API CHttpRequest* CreateRequest() override;
 
-    HTTP_API void AddRequest(URLSessionTask* InTask, CMacHttpRequest* InRequest);
+    HTTP_API void AddRequest(URLSessionTask* InTask, CAppleHttpRequest* InRequest);
 };
 
-HTTP_API extern CMacHttpRequestManager GMacHttpRequestManager;
+HTTP_API extern CAppleHttpRequestManager GAppleHttpRequestManager;
 
-typedef CMacHttpRequestManager CPlatformHttpRequestManager;
+typedef CAppleHttpRequestManager CPlatformHttpRequestManager;

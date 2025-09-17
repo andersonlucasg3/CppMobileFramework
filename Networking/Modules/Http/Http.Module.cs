@@ -9,14 +9,14 @@ public class HttpModule : AModuleDefinition
 
     public override string Name => "Http";
 
-    protected override void Configure()
+    protected override void Configure(ATargetPlatform InTargetPlatform)
     {
         AddDependencyModuleNames(
             "Core"
         );
 
         AddDependencyModuleNames(
-            ETargetPlatform.macOS,
+            ETargetPlatformGroup.Apple,
             "Foundation"
         );
 

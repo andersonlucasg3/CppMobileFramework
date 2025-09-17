@@ -4,7 +4,7 @@
 
 #include <filesystem>
 
-#include COMPILE_PLATFORM_HEADER(File.h)
+#include COMPILE_PLATFORM_GROUP_HEADER(File.h)
 
 CFile::CFile(const CString& InFilePath) :
 	FilePath(InFilePath)

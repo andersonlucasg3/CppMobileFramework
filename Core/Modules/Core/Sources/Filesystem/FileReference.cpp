@@ -6,7 +6,7 @@
 
 #include <filesystem>
 
-#include COMPILE_PLATFORM_HEADER(FileReference.h)
+#include COMPILE_PLATFORM_GROUP_HEADER(FileReference.h)
 
 static TFunction<TSharedPtr<CPlatformFileReference>(const CString&)> FactoryFunction = [](const CString& InPath)
 {

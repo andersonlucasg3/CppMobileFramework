@@ -5,7 +5,7 @@
 #include "Object/Collector/CollectorScope.h"
 #include "ScopeLock.h"
 
-#include COMPILE_PLATFORM_HEADER(Thread.h)
+#include COMPILE_PLATFORM_GROUP_HEADER(Thread.h)
 
 static thread_local bool GIsMainThread = true;
 static CPlatformThreadObjectPtr GMainThread;

@@ -10,7 +10,7 @@
 
 #include <exception>
 
-#include COMPILE_PLATFORM_HEADER(Logger.h)
+#include COMPILE_PLATFORM_GROUP_HEADER(Logger.h)
 
 static const CPlatformLogger GPlatformLogger;
 const CLogger& GLogger = GPlatformLogger;

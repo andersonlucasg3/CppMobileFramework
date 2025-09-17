@@ -1,4 +1,5 @@
-﻿using Shared.Projects;
+﻿using Shared.Platforms;
+using Shared.Projects;
 
 namespace TestSuit.Modules;
 
@@ -8,7 +9,7 @@ public class TestSuitLibModule : AModuleDefinition
 
     public override string Name => "TestSuitLib";
 
-    protected override void Configure()
+    protected override void Configure(ATargetPlatform InTargetPlatform)
     {
         
     }

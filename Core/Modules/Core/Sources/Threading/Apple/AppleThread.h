@@ -6,15 +6,15 @@
 
 #include <thread>
 
-FORWARD_DECLARE_OBJECT(MacThread);
+FORWARD_DECLARE_OBJECT(AppleThread);
 
-class CMacThread : public CThread
+class CAppleThread : public CThread
 {
     using Super = CThread;
 
 public:
-    CORE_API CMacThread() = default;
-    CORE_API ~CMacThread() override = default;
+    CORE_API CAppleThread() = default;
+    CORE_API ~CAppleThread() override = default;
 
     CORE_API void SetName(const CString& Name) override;
     CORE_API const CString& Name() const override;
@@ -30,5 +30,5 @@ private:
     CORE_API void StartInternal(const TFunction<void(const CThreadWeakObjectPtr&)>& ThreadFunc) override;
 };
 
-typedef CMacThread CPlatformThread;
+typedef CAppleThread CPlatformThread;
 FORWARD_DECLARE_OBJECT_PTR(PlatformThread);

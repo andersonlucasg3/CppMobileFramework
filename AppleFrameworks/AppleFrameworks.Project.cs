@@ -9,7 +9,7 @@ public class AppleFrameworksProject : AProjectDefinition
 {
     public override string Name => "AppleFrameworks";
     
-    protected override void Configure()
+    protected override void Configure(ATargetPlatform InTargetPlatform)
     {
         AddModuleToGroup<FoundationModule>(ETargetPlatformGroup.Apple);
         // AddModule<MetalModule>();

@@ -4,7 +4,7 @@
 
 #include "Templates/Array.h"
 
-#include COMPILE_PLATFORM_HEADER(Path.h)
+#include COMPILE_PLATFORM_GROUP_HEADER(Path.h)
 
 static const CPlatformPath GPlatformPath;
 const CPath& GPath = GPlatformPath;

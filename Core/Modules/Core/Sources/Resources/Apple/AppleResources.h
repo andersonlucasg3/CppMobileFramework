@@ -2,12 +2,12 @@
 
 #include "Resources/Resources.h"
 
-class CMacResources : public CResources
+class CAppleResources : public CResources
 {
 public:
-    CORE_API ~CMacResources() override = default;
+    CORE_API ~CAppleResources() override = default;
 
     CORE_API SFileRef GetResource(const CString& InResourceName) const override;
 };
 
-typedef CMacResources CPlatformResources;
+typedef CAppleResources CPlatformResources;

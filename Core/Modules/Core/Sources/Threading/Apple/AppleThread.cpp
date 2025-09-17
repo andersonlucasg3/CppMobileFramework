@@ -1,4 +1,4 @@
-#include "MacThread.h"
+#include "AppleThread.h"
 
 #include "SmartPointer/MakeAndCasts.h"
 
@@ -9,17 +9,17 @@
 #include <chrono>
 #include <thread>
 
-void CMacThread::SetName(const CString &Name)
+void CAppleThread::SetName(const CString &Name)
 {
     _threadName = Name;
 }
 
-const CString& CMacThread::Name() const
+const CString& CAppleThread::Name() const
 {
     return _threadName;
 }
 
-void CMacThread::Join()
+void CAppleThread::Join()
 {
     if (_thread && _thread->joinable())
     {
@@ -27,12 +27,12 @@ void CMacThread::Join()
     }
 }
 
-void CMacThread::Sleep(UInt64 InMilliseconds) const
+void CAppleThread::Sleep(UInt64 InMilliseconds) const
 {
     std::this_thread::sleep_for(std::chrono::milliseconds(InMilliseconds));
 }
 
-void CMacThread::StartInternal(const TFunction<void(const CThreadWeakObjectPtr&)>& ThreadFunc)
+void CAppleThread::StartInternal(const TFunction<void(const CThreadWeakObjectPtr&)>& ThreadFunc)
 {
     if (!_thread)
     {

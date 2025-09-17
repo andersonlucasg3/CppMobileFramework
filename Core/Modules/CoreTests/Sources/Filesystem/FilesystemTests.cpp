@@ -23,7 +23,7 @@ void CFilesystemTests::TestFiles()
 
 #if PLATFORM_WINDOWS
     SFileRef ExistingRef = "./CoreTests.exe";
-#elif PLATFORM_MACOS
+#elif PLATFORM_GROUP_APPLE
     SFileRef ExistingRef = "./CoreTests";
 #endif
 

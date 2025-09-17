@@ -8,25 +8,25 @@
 
 #include "URLSession/NSURLSessionDataDelegate.h"
 
-FORWARD_DECLARE_OBJECT(MacHttpRequest);
+FORWARD_DECLARE_OBJECT(AppleHttpRequest);
 
 using namespace NS;
 
-class CMacHttpRequest : public CHttpRequest, protected URLSessionDataDelegate
+class CAppleHttpRequest : public CHttpRequest, protected URLSessionDataDelegate
 {
     using Super = CHttpRequest;
 
     SharedPtr<URLSession> _urlSession;
 
 public:
-    HTTP_API CMacHttpRequest() = default;
-    HTTP_API ~CMacHttpRequest() override = default;
+    HTTP_API CAppleHttpRequest() = default;
+    HTTP_API ~CAppleHttpRequest() override = default;
 
     HTTP_API void SetURLSession(const SharedPtr<class URLSession> InURLSession);
 
     HTTP_API void Process() override;
 
-    friend class CMacHttpRequestManager;
+    friend class CAppleHttpRequestManager;
 };
 
-typedef CMacHttpRequest CPlatformHttpRequest;
+typedef CAppleHttpRequest CPlatformHttpRequest;

@@ -1,8 +1,8 @@
-#include "MacHttpRequest.h"
+#include "AppleHttpRequest.h"
 
 #include "String/Apple/AppleStringConvertion.h"
 
-#include "Mac/MacHttpRequestManager.h"
+#include "AppleHttpRequestManager.h"
 
 #include "URL/NSURL.h"
 #include "URLSession/NSURLSession.h"
@@ -10,18 +10,18 @@
 
 using namespace NS;
 
-void CMacHttpRequest::SetURLSession(const SharedPtr<URLSession> InURLSession)
+void CAppleHttpRequest::SetURLSession(const SharedPtr<URLSession> InURLSession)
 {
     _urlSession = InURLSession;
 }
 
-void CMacHttpRequest::Process()
+void CAppleHttpRequest::Process()
 {
     URL* Url = URL::url(CStringToNSString(Endpoint()));
 
     URLSessionDataTask* DataTask = _urlSession->dataTask(Url);
 
-    GMacHttpRequestManager.AddRequest(DataTask, this);
+    GAppleHttpRequestManager.AddRequest(DataTask, this);
 
     DataTask->resume();
 }
