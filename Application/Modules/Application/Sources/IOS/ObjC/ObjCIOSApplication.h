@@ -1,4 +1,6 @@
-#include "IOSApplication.h"
+#pragma once
+
+#if __OBJC__
 
 #import <UIKit/UIKit.h>
 
@@ -6,6 +8,5 @@
 
 @end
 
-@implementation IOSApplication
+#endif
 
-@end

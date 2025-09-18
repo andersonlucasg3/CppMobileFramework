@@ -14,5 +14,6 @@ public class ApplicationProject : AProjectDefinition
         AddProjectDependency<CoreProject>();
 
         AddModule<ApplicationModule>();
+        AddModule<UIModule>();
     }
 }

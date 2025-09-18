@@ -3,16 +3,15 @@ using ProjectTools.Platforms;
 
 namespace Application.Modules;
 
-public class ApplicationModule : AModuleDefinition
+public class UIModule : AModuleDefinition
 {
-    public override string Name => "Application";
+    public override string Name => "UI";
     public override EModuleBinaryType BinaryType => EModuleBinaryType.DynamicLibrary;
 
     protected override void Configure(ATargetPlatform InTargetPlatform)
     {
         AddDependencyModuleNames(
-            "Core",
-            "UI"
+            "Core"
         );
 
         PlatformSpecifics.GetIOS().AddFrameworkDependencies(
