@@ -18,14 +18,17 @@ CNativeApplication::~CNativeApplication()
     _uiApplication = nil;
 }
 
+void CNativeApplication::SetNativeApp(CApplication* App, IOSApplication *IOSApplication)
+{
+    if (App && IOSApplication)
+    {
+        App->_nativeApplication = MakeShared<CNativeApplication>(IOSApplication);
+    }
+}
+
 CNativeApplication::operator IOSApplication*()
 {
     return _uiApplication;
-}
-
-CApplication* CApplication::SharedApp()
-{
-    return GSharedApp;
 }
 
 int CApplication::Run(int argc, char* argv[])
@@ -41,6 +44,11 @@ int CApplication::Run(int argc, char* argv[])
 
         return UIApplicationMain(argc, argv, ApplicationClassName, AppDelegateClassName);
     }
+}
+
+CApplication* CApplication::SharedApp()
+{
+    return GSharedApp;
 }
 
 @implementation IOSApplication

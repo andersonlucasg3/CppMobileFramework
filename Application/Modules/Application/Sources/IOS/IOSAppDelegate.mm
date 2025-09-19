@@ -1,6 +1,7 @@
 #include "IOSAppDelegate.h"
 
 #include "Application.h"
+#include "ApplicationDelegate.h"
 #include "IOSApplication.h"
 #include "IOSSceneDelegate.h"
 
@@ -8,7 +9,7 @@
 
 @implementation IOSAppDelegate
 {
-    CApplication* _application;
+    CApplicationDelegateWeakObjectPtr _delegate;
 }
 
 - (instancetype)init
@@ -16,16 +17,16 @@
     self = [super init];
     if (self) 
     {
-        _application = CApplication::SharedApp();
+        _delegate = CApplication::SharedApp()->Delegate;
     }
     return self;
 }
 
 - (void)applicationDidFinishLaunching:(UIApplication *)application 
 {
-    if (_application->Delegate)
+    if (_delegate.IsValid())
     {
-        _application->Delegate->DidFinishLaunching(_application);
+        _delegate->DidFinishLaunching(CApplication::SharedApp());
     }
 }
 

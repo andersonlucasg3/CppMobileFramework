@@ -1,27 +1,10 @@
+#include "Views/UIScreen.h"
 #include "IOSUIScreen.h"
 
 #include "Graphics/Rects.h"
-#include "UIScreen.h"
 
 #include <CoreFoundation/CFCGTypes.h>
 #import <UIKit/UIScreen.h>
-
-CNativeScreen::CNativeScreen(UIScreen* UIScreen)
-:   _uiScreen([UIScreen retain])
-{
-
-}
-
-CNativeScreen::~CNativeScreen()
-{
-    [_uiScreen release];
-    _uiScreen = nil;
-}
-
-CNativeScreen::operator UIScreen*() const
-{
-    return _uiScreen;
-}
 
 CUIScreen* CUIScreen::MainScreen()
 {
@@ -37,4 +20,9 @@ SRectF CUIScreen::Bounds() const
     CGSize Size = Screen.bounds.size;
 
     return SRectF(Origin.x, Origin.y, Size.width, Size.height);
+}
+
+CNativeScreen& CUIScreen::NativeScreen()
+{
+    return *_nativeScreen;
 }

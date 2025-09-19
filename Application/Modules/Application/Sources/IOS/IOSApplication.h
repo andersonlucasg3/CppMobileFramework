@@ -14,9 +14,9 @@ public:
     CNativeApplication(IOSApplication* IOSApplication);
     ~CNativeApplication();
 
-    operator IOSApplication*();
-
     static void SetNativeApp(CApplication* App, IOSApplication* IOSApplication);
+
+    operator IOSApplication*();
 
 private:
     IOSApplication* _uiApplication;

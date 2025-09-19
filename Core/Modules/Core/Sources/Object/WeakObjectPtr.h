@@ -62,6 +62,25 @@ public:
         _object = nullptr;
     }
 
+    inline bool IsValid() const
+    {
+        SScopeLock Lock(_criticalSection);
+
+        return _object != nullptr && !_object->IsQueuedForDestruction();
+    }
+
+    inline TObject* Get() const
+    {
+        SScopeLock Lock(_criticalSection);
+
+        return _object;
+    }
+
+    inline TObject* operator->()
+    {
+        return _object;
+    }
+
     inline TWeakObjectPtr& operator=(TObject* Object)
     {
         SScopeLock Lock(_criticalSection);
@@ -94,20 +113,6 @@ public:
         });
 
         return *this;
-    }
-
-    inline bool IsValid() const
-    {
-        SScopeLock Lock(_criticalSection);
-
-        return _object != nullptr && !_object->IsQueuedForDestruction();
-    }
-
-    inline TObject* Get() const
-    {
-        SScopeLock Lock(_criticalSection);
-
-        return _object;
     }
 
 private:

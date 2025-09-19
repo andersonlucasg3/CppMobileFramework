@@ -1,26 +1,11 @@
-#include "IOS/IOSUIWindow.h"
-#include "UIWindow.h"
+#include "IOSUIWindow.h"
+#include "Views/UIWindow.h"
+
+#include "Controllers/UIViewController.h"
+#include "Controllers/IOS/IOSUIViewController.h"
 
 #include <CoreGraphics/CGGeometry.h>
-
 #include <UIKit/UIKit.h>
-
-CNativeWindow::CNativeWindow(UIWindow* UIWindow)
-:   _uiWindow([UIWindow retain])
-{
-    
-}
-
-CNativeWindow::~CNativeWindow()
-{
-    [_uiWindow release];
-    _uiWindow = nil;
-}
-
-CNativeWindow::operator UIWindow*() const
-{
-    return _uiWindow;
-}
 
 CUIWindow::CUIWindow(const SRectF& WindowRect)
 {
@@ -39,3 +24,19 @@ void CUIWindow::Show()
     // will be used by the Scene delegate to make it key and visible
     UIApplication.sharedApplication.delegate.window = *_nativeWindow;
 }
+
+void CUIWindow::SetRootViewController(CUIViewController* InRootViewController)
+{
+    UIWindow* Window = *_nativeWindow;
+
+    [Window setRootViewController:InRootViewController->NativeViewController()];
+}
+
+CNativeWindow& CUIWindow::NativeWindow()
+{
+    return *_nativeWindow;
+}
+
+@implementation IOSWindow
+
+@end

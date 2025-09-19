@@ -19,8 +19,9 @@ public:
     APPLICATION_API CApplication() = default;
     APPLICATION_API ~CApplication() = default;
     
-    APPLICATION_API static CApplication* SharedApp();
     APPLICATION_API int Run(int argc, char* argv[]);
+    
+    APPLICATION_API static CApplication* SharedApp();
 
 private:
     TSharedPtr<CNativeApplication> _nativeApplication;

@@ -1,8 +1,11 @@
 #pragma once
 
+#include "Object/ClassMacros.h"
 #include "Object/Object.h"
 
 class CApplication;
+
+FORWARD_DECLARE_OBJECT(ApplicationDelegate);
 
 class CApplicationDelegate : public CObject
 {
