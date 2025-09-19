@@ -1,18 +1,23 @@
 #pragma once
 
 #include "Application.h"
-#include "Object/ClassMacros.h"
 
-class CIOSApplication : public CApplication
+#include <UIKit/UIKit.h>
+
+@interface IOSApplication : UIApplication
+
+@end
+
+class CNativeApplication
 {
-    using Super = CApplication;
-
 public:
-    APPLICATION_API CIOSApplication() = default;
-    APPLICATION_API ~CIOSApplication() override = default;
+    CNativeApplication(IOSApplication* IOSApplication);
+    ~CNativeApplication();
 
-    APPLICATION_API int Run(int argc, char* argv[]) override;
+    operator IOSApplication*();
+
+    static void SetNativeApp(CApplication* App, IOSApplication* IOSApplication);
+
+private:
+    IOSApplication* _uiApplication;
 };
-
-typedef CIOSApplication CPlatformApplication;
-FORWARD_DECLARE_OBJECT_PTR(PlatformApplication);

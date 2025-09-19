@@ -5,8 +5,11 @@
 #include "Object/Properties/Property.h"
 
 #include "ApplicationDelegate.h"
+#include "SmartPointer/SharedPointer.h"
 
 FORWARD_DECLARE_OBJECT(Application);
+
+class CNativeApplication;
 
 class CApplication : public CObject
 {
@@ -14,12 +17,13 @@ public:
     PROPERTY(CApplicationDelegate, Delegate);
 
     APPLICATION_API CApplication() = default;
-    APPLICATION_API virtual ~CApplication() = default;
+    APPLICATION_API ~CApplication() = default;
     
-    APPLICATION_API static CApplication* Shared();
-
-    APPLICATION_API virtual int Run(int argc, char* argv[]);
+    APPLICATION_API static CApplication* SharedApp();
+    APPLICATION_API int Run(int argc, char* argv[]);
 
 private:
-    static CApplication* _shared;
+    TSharedPtr<CNativeApplication> _nativeApplication;
+
+    friend class CNativeApplication;
 };

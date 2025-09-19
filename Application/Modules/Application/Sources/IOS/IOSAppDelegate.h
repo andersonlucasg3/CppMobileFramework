@@ -1,7 +1,5 @@
 #pragma once
 
-#if __OBJC__
-
 #import <UIKit/UIKit.h>
 
 @interface IOSAppDelegate : NSObject <UIApplicationDelegate>
@@ -11,5 +9,3 @@
 - (instancetype)init;
 
 @end
-
-#endif

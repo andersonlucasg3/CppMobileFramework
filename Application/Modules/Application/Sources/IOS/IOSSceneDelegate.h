@@ -3,8 +3,6 @@
 #import <UIKit/UIResponder.h>
 #import <UIKit/UIWIndowScene.h>
 
-@interface ObjCIOSSceneDelegate : UIResponder <UIWindowSceneDelegate>
-
-
+@interface IOSSceneDelegate : UIResponder <UIWindowSceneDelegate>
 
 @end

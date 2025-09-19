@@ -1,11 +1,10 @@
-#include "ObjcIOSAppDelegate.h"
-
-#if __OBJC__
+#include "IOSAppDelegate.h"
 
 #include "Application.h"
+#include "IOSApplication.h"
+#include "IOSSceneDelegate.h"
 
-#import "ObjCIOSSceneDelegate.h"
-#import <UIKit/UIKit.h>
+#include <UIKit/UIKit.h>
 
 @implementation IOSAppDelegate
 {
@@ -17,7 +16,7 @@
     self = [super init];
     if (self) 
     {
-        _application = CApplication::Shared();
+        _application = CApplication::SharedApp();
     }
     return self;
 }
@@ -33,11 +32,9 @@
 - (UISceneConfiguration *)application:(UIApplication *)application configurationForConnectingSceneSession:(UISceneSession *)connectingSceneSession options:(UISceneConnectionOptions *)options
 {
     UISceneConfiguration* Configuration = [[UISceneConfiguration alloc] initWithName:@"Default Configuration" sessionRole:connectingSceneSession.role];
-    Configuration.delegateClass = [ObjCIOSSceneDelegate class];
+    Configuration.delegateClass = [IOSSceneDelegate class];
     Configuration.storyboard = nil;
     return Configuration;
 }
 
 @end
-
-#endif

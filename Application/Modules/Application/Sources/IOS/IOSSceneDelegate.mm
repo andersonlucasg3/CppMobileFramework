@@ -1,8 +1,8 @@
-#include "ObjCIOSSceneDelegate.h"
+#include "IOSSceneDelegate.h"
 
 #import <UIKit/UIKit.h>
 
-@implementation ObjCIOSSceneDelegate
+@implementation IOSSceneDelegate
 
 - (void)scene:(UIScene *)scene willConnectToSession:(UISceneSession *)session options:(UISceneConnectionOptions *)connectionOptions 
 {
