@@ -10,9 +10,7 @@
     {
         UIWindowScene* WindowScene = (UIWindowScene*)scene;
         UIWindow* Window = UIApplication.sharedApplication.delegate.window;
-        [Window setBackgroundColor:[UIColor whiteColor]];
         [Window setWindowScene:WindowScene];
-        Window.rootViewController = [[UIViewController alloc] init];
         [Window makeKeyAndVisible];
     }
 }

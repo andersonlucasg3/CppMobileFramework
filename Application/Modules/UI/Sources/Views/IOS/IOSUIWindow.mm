@@ -29,6 +29,8 @@ void CUIWindow::Show()
 
 void CUIWindow::SetRootViewController(CUIViewController* InRootViewController)
 {
+    _rootViewController = InRootViewController;
+    
     [NativeInstance<IOSWindow>() setRootViewController:InRootViewController->NativeInstance<IOSViewController>()];
 }
 

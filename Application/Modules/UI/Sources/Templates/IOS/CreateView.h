@@ -14,6 +14,7 @@ template<typename TNativeClass, class TUIClass, class TNativeInstanceClass = TNa
 inline TNativeClass* CreateView(TUIClass* Owner, const SRectF& ViewRect)
 {
     TNativeClass* View = [[[TNativeClass alloc] initWithOwner:Owner] autorelease];
+    [View setTranslatesAutoresizingMaskIntoConstraints:NO];
     [View setFrame:ToCGRect(ViewRect)];
     return View;
 }

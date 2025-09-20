@@ -1,14 +1,16 @@
 #pragma once
 
 #include "Object/ClassMacros.h"
+
 #include "Views/UIView.h"
+
+#include "Controllers/UIViewController.h"
 
 #include "Graphics/Rects.h"
 
 FORWARD_DECLARE_OBJECT(UIWindow);
 
 class CNativeWindow;
-class CUIViewController;
 
 using namespace UI::Graphics;
 
@@ -24,4 +26,7 @@ public:
     UI_API void Show();
 
     UI_API void SetRootViewController(CUIViewController* InRootViewController);
+
+private:
+    PROPERTY(CUIViewController, _rootViewController);
 };

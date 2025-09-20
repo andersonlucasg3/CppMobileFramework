@@ -24,6 +24,8 @@
 
 - (void)applicationDidFinishLaunching:(UIApplication *)application 
 {
+    [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"UIViewDisableAutoLayout"];
+
     if (_delegate.IsValid())
     {
         _delegate->DidFinishLaunching(CApplication::SharedApp());
