@@ -11,6 +11,13 @@
 - (instancetype)initWithOwner:(CUIViewController*)Owner;
 
 - (void)viewDidLoad;
+- (void)viewWillUnload;
+- (void)viewDidUnload;
+
+- (void)viewWillAppear:(BOOL)animated;
+- (void)viewDidAppear:(BOOL)animated;
+- (void)viewWillDisappear:(BOOL)animated;
+- (void)viewDidDisappear:(BOOL)animated;
 
 @end
 

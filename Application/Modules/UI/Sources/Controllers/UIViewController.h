@@ -18,6 +18,13 @@ public:
     UI_API virtual ~CUIViewController() = default;
 
     UI_API virtual void ViewDidLoad();
+    UI_API virtual void ViewWillUnload();
+    UI_API virtual void ViewDidUnload();
+    
+    UI_API virtual void ViewWillAppear(bool bAnimated);
+    UI_API virtual void ViewDidAppear(bool bAnimated);
+    UI_API virtual void ViewWillDisappear(bool bAnimated);
+    UI_API virtual void ViewDidDisappear(bool bAnimated);
 
     UI_API CUIView* View() const;
     UI_API void SetView(CUIView* View);
