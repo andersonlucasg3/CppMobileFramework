@@ -1,6 +1,6 @@
-#include "Views/UIScreen.h"
 #include "IOSUIScreen.h"
 
+#include "Graphics/IOS/IOSGraphics.h"
 #include "Graphics/Rects.h"
 
 #include <CoreFoundation/CFCGTypes.h>
@@ -15,14 +15,10 @@ CUIScreen* CUIScreen::MainScreen()
 
 SRectF CUIScreen::Bounds() const
 {
-    UIScreen* Screen = *_nativeScreen;
-    CGPoint Origin = Screen.bounds.origin;
-    CGSize Size = Screen.bounds.size;
-
-    return SRectF(Origin.x, Origin.y, Size.width, Size.height);
+    return ToRectF([NativeScreen() bounds]);
 }
 
-CNativeScreen& CUIScreen::NativeScreen()
+CNativeScreen& CUIScreen::NativeScreen() const
 {
     return *_nativeScreen;
 }

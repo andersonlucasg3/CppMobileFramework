@@ -50,7 +50,17 @@ namespace Objects::Properties
 			return Object();
 		}
 
+		operator TObject*() const
+		{
+			return Object();
+		}
+
 		TObject* operator->()
+		{
+			return Object();
+		}
+
+		TObject* operator->() const
 		{
 			return Object();
 		}

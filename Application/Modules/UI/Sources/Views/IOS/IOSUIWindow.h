@@ -2,10 +2,12 @@
 
 #include "Templates/IOS/NativeInstance.h"
 
+#include "Views/UIWindow.h"
+
 #include <UIKit/UIKit.h>
 
 @interface IOSWindow : UIWindow
 
-@end
+- (instancetype)initWithOwner:(CUIWindow*)Owner;
 
-class CNativeWindow : public TNativeInstance<IOSWindow> { };
+@end

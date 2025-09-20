@@ -2,10 +2,14 @@
 
 #include "Templates/IOS/NativeInstance.h"
 
+#include "Views/UIView.h"
+
 #include <UIKit/UIKit.h>
 
 @interface IOSView : UIView
 
+- (instancetype)initWithOwner:(CUIView*)Owner;
+
 @end
 
-class CNativeView : TNativeInstance<IOSView> { };
+class CNativeInstance : public TNativeInstance<IOSView> { };

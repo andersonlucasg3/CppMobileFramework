@@ -1,42 +1,49 @@
 #include "IOSUIWindow.h"
-#include "Views/UIWindow.h"
 
-#include "Controllers/UIViewController.h"
+#include "Graphics/IOS/IOSGraphics.h"
+#include "Templates/IOS/CreateView.h"
+#include "Views/IOS/IOSUIView.h"
+
 #include "Controllers/IOS/IOSUIViewController.h"
 
 #include <CoreGraphics/CGGeometry.h>
 #include <UIKit/UIKit.h>
 
-CUIWindow::CUIWindow(const SRectF& WindowRect)
+CUIWindow::CUIWindow()
+:   Super(CreateView<IOSWindow>(this))
 {
-    CGRect WindowFrame = CGRectMake(WindowRect.X(), WindowRect.Y(), WindowRect.Width(), WindowRect.Height());
-    UIWindow* Window = [[UIWindow alloc] initWithFrame:WindowFrame];
-    _nativeWindow = MakeShared<CNativeWindow>(Window);
+
 }
 
-CUIWindow::~CUIWindow()
+CUIWindow::CUIWindow(const SRectF& WindowRect)
+:   Super(CreateView<IOSWindow>(this, WindowRect))
 {
-   
+    
 }
 
 void CUIWindow::Show()
 {
     // will be used by the Scene delegate to make it key and visible
-    UIApplication.sharedApplication.delegate.window = *_nativeWindow;
+    UIApplication.sharedApplication.delegate.window = NativeInstance<IOSWindow>();
 }
 
 void CUIWindow::SetRootViewController(CUIViewController* InRootViewController)
 {
-    UIWindow* Window = *_nativeWindow;
-
-    [Window setRootViewController:InRootViewController->NativeViewController()];
-}
-
-CNativeWindow& CUIWindow::NativeWindow()
-{
-    return *_nativeWindow;
+    [NativeInstance<IOSWindow>() setRootViewController:InRootViewController->NativeInstance<IOSViewController>()];
 }
 
 @implementation IOSWindow
+{
+    @public CUIWindowWeakObjectPtr _weakOwner;
+}
+
+- (instancetype)initWithOwner:(CUIWindow *)Owner 
+{
+    if (self = [super init])
+    {
+        _weakOwner = Owner;
+    }
+    return self;
+}
 
 @end

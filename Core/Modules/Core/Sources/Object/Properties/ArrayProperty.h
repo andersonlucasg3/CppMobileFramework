@@ -34,8 +34,6 @@ namespace Objects::Properties
     template<typename TObject = CObject>
     class TArrayProperty : public CArrayProperty
     {
-        static_assert(std::is_base_of_v<CObject, TObject>);
-
         using Super = CArrayProperty;
 
     public:

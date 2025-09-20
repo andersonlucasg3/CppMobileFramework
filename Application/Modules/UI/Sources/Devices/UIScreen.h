@@ -17,7 +17,7 @@ public:
 
     UI_API SRectF Bounds() const;
 
-    UI_API CNativeScreen& NativeScreen();
+    UI_API CNativeScreen& NativeScreen() const;
 
 protected:
     UI_API CUIScreen() = default;
