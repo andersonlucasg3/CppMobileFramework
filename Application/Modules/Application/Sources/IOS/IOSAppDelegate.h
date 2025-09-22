@@ -1,11 +1,11 @@
 #pragma once
 
+#include "Application.h"
+
 #import <UIKit/UIKit.h>
 
 @interface IOSAppDelegate : NSObject <UIApplicationDelegate>
 
-@property (strong, nonatomic) UIWindow *window;
-
-- (instancetype)init;
+- (instancetype)initWithApplication:(CApplication*)Application;
 
 @end

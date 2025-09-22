@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Application.h"
+#include "Templates/IOS/NativeInstance.h"
 
 #include <UIKit/UIKit.h>
 
@@ -8,16 +9,8 @@
 
 @end
 
-class CNativeApplication
+class CNativeApplication : public TNativeInstance<UIApplication> 
 {
 public:
-    CNativeApplication(IOSApplication* IOSApplication);
-    ~CNativeApplication();
-
     static void SetNativeApp(CApplication* App, IOSApplication* IOSApplication);
-
-    operator IOSApplication*();
-
-private:
-    IOSApplication* _uiApplication;
 };

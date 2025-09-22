@@ -11,42 +11,6 @@ CUIViewController::CUIViewController()
     _view = new CUIView(_nativeViewController.Raw());
 }
 
-void CUIViewController::ViewDidLoad()
-{
-    // to be overriden
-}
-
-void CUIViewController::ViewWillUnload()
-{
-    // to be overriden
-}
-
-void CUIViewController::ViewDidUnload()
-{
-    // to be overriden
-}
-
-void CUIViewController::ViewWillAppear(bool bAnimated)
-{
-    // to be overriden
-}
-
-void CUIViewController::ViewDidAppear(bool bAnimated)
-{
-    // to be overriden
-}
-
-void CUIViewController::ViewWillDisappear(bool bAnimated)
-{
-    // to be overriden
-}
-
-void CUIViewController::ViewDidDisappear(bool bAnimated)
-{
-    // to be overriden
-}
-
-
 CUIView* CUIViewController::View() const
 {
     return _view;

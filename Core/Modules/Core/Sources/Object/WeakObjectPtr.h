@@ -76,6 +76,11 @@ public:
         return _object;
     }
 
+    inline operator bool()
+    {
+        return IsValid();
+    }
+
     inline TObject* operator->()
     {
         return _object;

@@ -6,18 +6,6 @@
 
 static CApplication* GSharedApp = nullptr;
 
-CNativeApplication::CNativeApplication(IOSApplication* IOSApplication)
-:   _uiApplication([IOSApplication retain])
-{
-
-}
-
-CNativeApplication::~CNativeApplication()
-{
-    [_uiApplication release];
-    _uiApplication = nil;
-}
-
 void CNativeApplication::SetNativeApp(CApplication* App, IOSApplication *IOSApplication)
 {
     if (App && IOSApplication)
@@ -26,9 +14,9 @@ void CNativeApplication::SetNativeApp(CApplication* App, IOSApplication *IOSAppl
     }
 }
 
-CNativeApplication::operator IOSApplication*()
+CApplication* CApplication::SharedApp()
 {
-    return _uiApplication;
+    return GSharedApp;
 }
 
 int CApplication::Run(int argc, char* argv[])
@@ -46,11 +34,6 @@ int CApplication::Run(int argc, char* argv[])
     }
 }
 
-CApplication* CApplication::SharedApp()
-{
-    return GSharedApp;
-}
-
 @implementation IOSApplication
 
 - (instancetype)init 
@@ -58,9 +41,9 @@ CApplication* CApplication::SharedApp()
     self = [super init];
     if (self) 
     {
-        self.delegate = [[IOSAppDelegate alloc] init];
-
         CNativeApplication::SetNativeApp(GSharedApp, self);
+
+        self.delegate = [[IOSAppDelegate alloc] initWithApplication:GSharedApp];
     }
     return self;
 }

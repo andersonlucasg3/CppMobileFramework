@@ -23,8 +23,6 @@ public:
     UI_API CUIWindow(const SRectF& WindowRect);
     UI_API ~CUIWindow() override = default;
 
-    UI_API void Show();
-
     UI_API void SetRootViewController(CUIViewController* InRootViewController);
 
 private:

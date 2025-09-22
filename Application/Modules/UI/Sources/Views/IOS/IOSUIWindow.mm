@@ -21,12 +21,6 @@ CUIWindow::CUIWindow(const SRectF& WindowRect)
     
 }
 
-void CUIWindow::Show()
-{
-    // will be used by the Scene delegate to make it key and visible
-    UIApplication.sharedApplication.delegate.window = NativeInstance<IOSWindow>();
-}
-
 void CUIWindow::SetRootViewController(CUIViewController* InRootViewController)
 {
     _rootViewController = InRootViewController;

@@ -1,7 +1,5 @@
 #include "IOSAppDelegate.h"
 
-#include "Application.h"
-#include "ApplicationDelegate.h"
 #include "IOSApplication.h"
 #include "IOSSceneDelegate.h"
 
@@ -9,15 +7,15 @@
 
 @implementation IOSAppDelegate
 {
-    CApplicationDelegateWeakObjectPtr _delegate;
+    CApplicationWeakObjectPtr _application;
 }
 
-- (instancetype)init
+- (instancetype)initWithApplication:(CApplication *)Application
 {
     self = [super init];
     if (self) 
     {
-        _delegate = CApplication::SharedApp()->Delegate;
+        _application = Application;
     }
     return self;
 }
@@ -26,9 +24,9 @@
 {
     [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"UIViewDisableAutoLayout"];
 
-    if (_delegate.IsValid())
+    if (_application)
     {
-        _delegate->DidFinishLaunching(CApplication::SharedApp());
+        _application->DidLaunch();
     }
 }
 

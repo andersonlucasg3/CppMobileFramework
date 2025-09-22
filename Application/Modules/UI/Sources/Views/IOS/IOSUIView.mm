@@ -47,6 +47,16 @@ void CUIView::SetBackgroundColor()
     [NativeInstance<IOSView>() setBackgroundColor:[UIColor grayColor]];
 }
 
+SRectF CUIView::Frame() const
+{
+    return ToRectF([NativeInstance<IOSView>() frame]);
+}
+
+void CUIView::SetFrame(const SRectF& Frame)
+{
+    [NativeInstance<IOSView>() setFrame:ToCGRect(Frame)];
+}
+
 CUIView* CUIView::Superview() const
 {
     return _superview.Get();

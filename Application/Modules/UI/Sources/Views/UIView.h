@@ -26,6 +26,9 @@ public:
 
     UI_API void SetBackgroundColor();
 
+    UI_API SRectF Frame() const;
+    UI_API void SetFrame(const SRectF& Frame);
+    
     UI_API CUIView* Superview() const;
 
     template<typename TNativeView>
@@ -46,11 +49,13 @@ protected:
 
     void* GetNativePointer() const;
 
+protected:
+    ARRAYPROPERTY(CUIView, _subviews);
+    CUIViewWeakObjectPtr _superview;
+
 private:
     TSharedPtr<CNativeInstance> _nativeInstance;
 
-    CUIViewWeakObjectPtr _superview;
-    ARRAYPROPERTY(CUIView, _subviews);
-
     friend class CUIViewController;
+    friend class CUIStackView;
 };
