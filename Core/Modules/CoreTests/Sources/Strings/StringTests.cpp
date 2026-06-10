@@ -5,33 +5,35 @@
 
 REGISTER_TEST_CLASS(StringTests);
 
-const char* const CStrArray[10] {
-	"First string test 1",
-	"First string test 2",
-	"First string test 3",
-	"First string test 4",
-	"First string test 5",
-	"First string test 6",
-	"First string test 7",
-	"First string test 8",
-	"First string test 9",
-	"First string test 10"
-};
-
 void CStringTests::TestCase()
 {
-    CString String = "Eu só quero meter o pé porran";
+	// Test basic ASCII replace
+	CString Rep1 = CString("abc123abc").Replace("abc", "xyz");
+	ASSERT_EQUAL(Rep1, "xyz123xyz");
 
-	CString Replaced = String.Replace("ó", "o").Replace("é", "e");
+	// Test chained replace
+	CString Rep2 = Rep1.Replace("xyz", "hello");
+	ASSERT_EQUAL(Rep2, "hello123hello");
 
-	ASSERT_EQUAL(Replaced, "Eu so quero meter o pe porran");
+	// Test replace with longer string
+	CString Rep3 = CString("fox").Replace("o", "ooo");
+	ASSERT_EQUAL(Rep3, "fooox");
 
-	Replaced = Replaced.Replace("o", "sair daqui");
+	// Test replace shrinking
+	CString Rep4 = Rep3.Replace("ooo", "o");
+	ASSERT_EQUAL(Rep4, "fox");
 
-	ASSERT_EQUAL(Replaced, "Eu ssair daqui quersair daqui meter sair daqui pe psair daquirran");
+	// Test UTF-8 accented characters
+	CString Str5 = "Eu s\xc3\xb3 quero meter o p\xc3\xa9 porran";
+	CString Rep5 = Str5.Replace("\xc3\xb3", "o").Replace("\xc3\xa9", "e");
+	ASSERT_EQUAL(Rep5, "Eu so quero meter o pe porran");
 
-	Replaced = Replaced.Replace("sair daqui", "o").Replace("so", "só");
-	Replaced = Replaced.Replace("pe", "pé");
+	// Test chained replace round-trip
+	CString Rep6 = Rep5.Replace("o", "sair daqui");
+	ASSERT_EQUAL(Rep6, "Eu ssair daqui quersair daqui meter sair daqui pe psair daquirran");
 
-	ASSERT_EQUAL(Replaced, "Eu só quero meter o pé porran");
+	CString Rep7 = Rep6.Replace("sair daqui", "o");
+	Rep7 = Rep7.Replace("so", "s\xc3\xb3");
+	Rep7 = Rep7.Replace("pe", "p\xc3\xa9");
+	ASSERT_EQUAL(Rep7, "Eu s\xc3\xb3 quero meter o p\xc3\xa9 porran");
 }

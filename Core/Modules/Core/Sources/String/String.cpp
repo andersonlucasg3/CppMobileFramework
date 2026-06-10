@@ -332,32 +332,70 @@ CWString CString::WStr() const
 
 CString& CString::operator+=(const CString& Other)
 {
-    return *this = CString("{}{}", _bufferPtr.Raw(), Other._bufferPtr.Raw());
+    SizeT NewLen = _length + Other._length;
+    char* NewBuf = new char[NewLen + 1];
+    GMemory.Copy(_bufferPtr.Raw(), NewBuf, _length);
+    GMemory.Copy(Other._bufferPtr.Raw(), NewBuf + _length, Other._length);
+    NewBuf[NewLen] = '\0';
+    _bufferPtr = MakeShareable<char, SArrayDeleter<char>>(NewBuf);
+    _length = NewLen;
+    return *this;
 }
 
 CString& CString::operator+=(const char* CStr)
 {
-    return *this = CString("{}{}", _bufferPtr.Raw(), CStr);
+    SizeT OtherLen = StrLen(CStr);
+    SizeT NewLen = _length + OtherLen;
+    char* NewBuf = new char[NewLen + 1];
+    GMemory.Copy(_bufferPtr.Raw(), NewBuf, _length);
+    GMemory.Copy(CStr, NewBuf + _length, OtherLen);
+    NewBuf[NewLen] = '\0';
+    _bufferPtr = MakeShareable<char, SArrayDeleter<char>>(NewBuf);
+    _length = NewLen;
+    return *this;
 }
 
 CString& CString::operator+=(char Char)
 {
-    return *this = CString("{}{}", _bufferPtr.Raw(), Char);
+    SizeT NewLen = _length + 1;
+    char* NewBuf = new char[NewLen + 1];
+    GMemory.Copy(_bufferPtr.Raw(), NewBuf, _length);
+    NewBuf[_length] = Char;
+    NewBuf[NewLen] = '\0';
+    _bufferPtr = MakeShareable<char, SArrayDeleter<char>>(NewBuf);
+    _length = NewLen;
+    return *this;
 }
 
 CString CString::operator+(const CString& Other) const
 {
-    return CString("{}{}", _bufferPtr.Raw(), Other._bufferPtr.Raw());
+    SizeT NewLen = _length + Other._length;
+    char* NewBuf = new char[NewLen + 1];
+    GMemory.Copy(_bufferPtr.Raw(), NewBuf, _length);
+    GMemory.Copy(Other._bufferPtr.Raw(), NewBuf + _length, Other._length);
+    NewBuf[NewLen] = '\0';
+    return CString(NewBuf, NewLen);
 }
 
 CString CString::operator+(const char* CStr) const
 {
-    return CString("{}{}", _bufferPtr.Raw(), CStr);
+    SizeT OtherLen = StrLen(CStr);
+    SizeT NewLen = _length + OtherLen;
+    char* NewBuf = new char[NewLen + 1];
+    GMemory.Copy(_bufferPtr.Raw(), NewBuf, _length);
+    GMemory.Copy(CStr, NewBuf + _length, OtherLen);
+    NewBuf[NewLen] = '\0';
+    return CString(NewBuf, NewLen);
 }
 
 CString CString::operator+(char Char) const
 {
-    return CString("{}{}", _bufferPtr.Raw(), Char);
+    SizeT NewLen = _length + 1;
+    char* NewBuf = new char[NewLen + 1];
+    GMemory.Copy(_bufferPtr.Raw(), NewBuf, _length);
+    NewBuf[_length] = Char;
+    NewBuf[NewLen] = '\0';
+    return CString(NewBuf, NewLen);
 }
 
 bool CString::operator >(const CString& Other) const
