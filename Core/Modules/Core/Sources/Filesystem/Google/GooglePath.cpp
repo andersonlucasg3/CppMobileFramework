@@ -7,9 +7,9 @@
 #warning "ANDROID_APPLICATION_PACKAGE not defined yet"
 #endif // ANDROID_APPLICATION_PACKAGE
 
-const CAndroidPath& GAndroidPath = static_cast<const CAndroidPath&>(GPath);
+const CGooglePath& GAndroidPath = static_cast<const CGooglePath&>(GPath);
 
-CAndroidPath::CAndroidPath()
+CGooglePath::CGooglePath()
 {
     _filesPath = Combine({
         "/",
@@ -23,17 +23,17 @@ CAndroidPath::CAndroidPath()
     _cachesPath = Combine({ _filesPath, "Caches" });
 }
 
-char CAndroidPath::PathSeparator() const
+char CGooglePath::PathSeparator() const
 {
     return '/';
 }
 
-CString CAndroidPath::GetFullPath(const CString& InPath) const
+CString CGooglePath::GetFullPath(const CString& InPath) const
 {
     return InPath;
 }
 
-CString CAndroidPath::GetPathRoot(const CString& InPath) const
+CString CGooglePath::GetPathRoot(const CString& InPath) const
 {
     if (InPath.IsEmpty())
     {
@@ -48,12 +48,12 @@ CString CAndroidPath::GetPathRoot(const CString& InPath) const
     return "";
 }
 
-const CString& CAndroidPath::CachesPath() const
+const CString& CGooglePath::CachesPath() const
 {
     return _cachesPath;
 }
 
-const CString& CAndroidPath::GetFilesPath() const
+const CString& CGooglePath::GetFilesPath() const
 {
     return _filesPath;
 }

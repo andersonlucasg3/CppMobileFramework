@@ -2,13 +2,13 @@
 
 #include "Environment/Environment.h"
 
-class CAndroidEnvironment : public CEnvironment
+class CGoogleEnvironment : public CEnvironment
 {
 public:
-    CORE_API CAndroidEnvironment() = default;
-    CORE_API ~CAndroidEnvironment() override = default;
+    CORE_API CGoogleEnvironment() = default;
+    CORE_API ~CGoogleEnvironment() override = default;
 
     CORE_API const char* NewLine() const override;
 };
 
-typedef CAndroidEnvironment CPlatformEnvironment;
+typedef CGoogleEnvironment CPlatformEnvironment;

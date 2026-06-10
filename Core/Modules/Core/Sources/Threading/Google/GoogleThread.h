@@ -8,21 +8,21 @@
 
 DECLARE_CLASS_HEADER(AndroidThread);
 
-class CAndroidThread : public CThread
+class CGoogleThread : public CThread
 {
     using Super = CThread;
     
     CString _threadName;
 
 public:
-    CORE_API ~CAndroidThread() override = default;
+    CORE_API ~CGoogleThread() override = default;
 
     CORE_API void SetName(const CString& Name) override;
     CORE_API const CString& Name() const override;
 
     CORE_API void Join() override;
 
-    CORE_API static CAndroidThreadPtr Create();
+    CORE_API static CGoogleThreadPtr Create();
 };
 
-typedef CAndroidThread CPlatformThread;
+typedef CGoogleThread CPlatformThread;

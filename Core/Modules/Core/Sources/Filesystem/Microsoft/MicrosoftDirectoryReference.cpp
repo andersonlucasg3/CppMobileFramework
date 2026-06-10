@@ -7,20 +7,20 @@
 #include <Windows.h>
 #include <filesystem>
 
-void CWindowsDirectoryReference::UpdateExistance()
+void CMicrosoftDirectoryReference::UpdateExistance()
 {
 	DWORD Attrs = GetFileAttributes(*_path);
 	
 	_bExists = Attrs != INVALID_FILE_ATTRIBUTES && (Attrs & FILE_ATTRIBUTE_DIRECTORY);
 }
 
-CWindowsDirectoryReference::CWindowsDirectoryReference(const CString& InPath) : Super(InPath)
+CMicrosoftDirectoryReference::CMicrosoftDirectoryReference(const CString& InPath) : Super(InPath)
 ,	_path(InPath)
 {	
 	UpdateExistance();
 }
 
-bool CWindowsDirectoryReference::Create(bool InCreateIntermediates)
+bool CMicrosoftDirectoryReference::Create(bool InCreateIntermediates)
 {
     if (InCreateIntermediates)
     {
@@ -36,7 +36,7 @@ bool CWindowsDirectoryReference::Create(bool InCreateIntermediates)
     return _bExists;
 }
 
-bool CWindowsDirectoryReference::Delete()
+bool CMicrosoftDirectoryReference::Delete()
 {
     if (!RemoveDirectory(*_path))
     {
@@ -47,12 +47,12 @@ bool CWindowsDirectoryReference::Delete()
     return true;
 }
 
-SDirectoryRef CWindowsDirectoryReference::Combine(const CString& InComponent) const
+SDirectoryRef CMicrosoftDirectoryReference::Combine(const CString& InComponent) const
 {
 	return GPath.Combine({ _path, InComponent });
 }
 
-SDirectoryRef CWindowsDirectoryReference::Combine(const TArray<CString>& InComponents) const
+SDirectoryRef CMicrosoftDirectoryReference::Combine(const TArray<CString>& InComponents) const
 {
 	TArray<CString> NewArray(InComponents);
 	NewArray.Insert(0, _path);
@@ -60,12 +60,12 @@ SDirectoryRef CWindowsDirectoryReference::Combine(const TArray<CString>& InCompo
 	return GPath.Combine(NewArray);
 }
 
-SFileRef CWindowsDirectoryReference::CombineFile(const CString& InFilename) const
+SFileRef CMicrosoftDirectoryReference::CombineFile(const CString& InFilename) const
 {
 	return GPath.Combine({ _path, InFilename });
 }
 
-SFileRef CWindowsDirectoryReference::CombineFile(const TArray<CString>& InComponents) const
+SFileRef CMicrosoftDirectoryReference::CombineFile(const TArray<CString>& InComponents) const
 {
 	TArray<CString> NewArray(InComponents);
 	NewArray.Insert(0, _path);

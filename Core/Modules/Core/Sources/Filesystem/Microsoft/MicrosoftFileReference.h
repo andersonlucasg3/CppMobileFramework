@@ -4,7 +4,7 @@
 
 #include "Filesystem/FileReference.h"
 
-class CWindowsFileReference : public CFileReference
+class CMicrosoftFileReference : public CFileReference
 {
     using Super = CFileReference;
 
@@ -13,10 +13,10 @@ class CWindowsFileReference : public CFileReference
     CORE_API void UpdateExistance() override;
 
 public:
-    explicit CORE_API CWindowsFileReference(const CString& InPath);
-    CORE_API ~CWindowsFileReference() override = default;
+    explicit CORE_API CMicrosoftFileReference(const CString& InPath);
+    CORE_API ~CMicrosoftFileReference() override = default;
 };
 
-typedef CWindowsFileReference CPlatformFileReference;
+typedef CMicrosoftFileReference CPlatformFileReference;
 
 #endif // PLATFORM_WINDOWS

@@ -2,9 +2,13 @@
 
 #include "Threading/Thread.h"
 
+#include "Object/ClassMacros.h"
+
 #include <thread>
 
-class CWindowsThread : public CThread
+FORWARD_DECLARE_OBJECT(WindowsThread);
+
+class CMicrosoftThread : public CThread
 {
     using Super = CThread;
 
@@ -13,8 +17,8 @@ class CWindowsThread : public CThread
     bool bIsRunning = false;
 
 public:
-    CORE_API CWindowsThread() = default;
-    CORE_API ~CWindowsThread() override = default;
+    CORE_API CMicrosoftThread() = default;
+    CORE_API ~CMicrosoftThread() override = default;
 
     CORE_API void SetName(const CString& Name) override;
     CORE_API const CString& Name() const override;
@@ -27,6 +31,5 @@ private:
     CORE_API void StartInternal(const TFunction<void(const CThreadWeakObjectPtr&)>& ThreadFunc) override;
 };
 
-typedef CWindowsThread CMicrosoftThread;
-typedef CWindowsThread CPlatformThread;
-typedef TObjectPtr<CWindowsThread> CPlatformThreadObjectPtr;
+typedef CMicrosoftThread CPlatformThread;
+FORWARD_DECLARE_OBJECT_PTR(PlatformThread);

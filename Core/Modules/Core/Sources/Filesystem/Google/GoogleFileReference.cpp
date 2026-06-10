@@ -2,12 +2,12 @@
 
 #include <filesystem>
 
-void CAndroidFileReference::UpdateExistance()
+void CGoogleFileReference::UpdateExistance()
 {
     _bExists = std::filesystem::exists(*_path);
 }
 
-CAndroidFileReference::CAndroidFileReference(const CString& InPath) : Super(InPath)
+CGoogleFileReference::CGoogleFileReference(const CString& InPath) : Super(InPath)
 {
     //
 }

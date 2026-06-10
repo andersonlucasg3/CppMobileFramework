@@ -4,7 +4,7 @@
 
 #include "Filesystem/DirectoryReference.h"
 
-class CWindowsDirectoryReference : public CDirectoryReference
+class CMicrosoftDirectoryReference : public CDirectoryReference
 {
 	using Super = CDirectoryReference;
 
@@ -13,8 +13,8 @@ class CWindowsDirectoryReference : public CDirectoryReference
 	CORE_API void UpdateExistance() override;
 
 public:
-	CORE_API explicit CWindowsDirectoryReference(const CString& InPath);
-	CORE_API ~CWindowsDirectoryReference() override = default;
+	CORE_API explicit CMicrosoftDirectoryReference(const CString& InPath);
+	CORE_API ~CMicrosoftDirectoryReference() override = default;
 
 	CORE_API bool Create(bool InCreateIntermediates = false) override;
 	CORE_API bool Delete() override;
@@ -25,6 +25,6 @@ public:
     CORE_API SFileRef CombineFile(const TArray<CString>& InComponents) const override;
 };
 
-typedef CWindowsDirectoryReference CPlatformDirectoryReference;
+typedef CMicrosoftDirectoryReference CPlatformDirectoryReference;
 
 #endif // PLATFORM_WINDOWS

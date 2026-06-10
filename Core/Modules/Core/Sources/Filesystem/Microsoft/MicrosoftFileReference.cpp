@@ -4,14 +4,14 @@
 
 #include <Windows.h>
 
-void CWindowsFileReference::UpdateExistance()
+void CMicrosoftFileReference::UpdateExistance()
 {
     DWORD Attrs = GetFileAttributes(*_path);
 
     _bExists = Attrs != INVALID_FILE_ATTRIBUTES && !(Attrs & FILE_ATTRIBUTE_DIRECTORY);
 }
 
-CWindowsFileReference::CWindowsFileReference(const CString& InPath) 
+CMicrosoftFileReference::CMicrosoftFileReference(const CString& InPath) 
 :   Super(InPath)
 ,   _path(InPath)
 {

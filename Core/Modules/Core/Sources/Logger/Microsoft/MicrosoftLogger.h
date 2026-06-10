@@ -2,7 +2,7 @@
 
 #include "Logger/Logger.h"
 
-class CWindowsLogger : public CLogger
+class CMicrosoftLogger : public CLogger
 {
 	using Super = CLogger;
 
@@ -10,8 +10,8 @@ protected:
 	CORE_API void WriteLogLine(const std::string& LogLine) const override;
 
 public:
-	CORE_API CWindowsLogger();
-	CORE_API ~CWindowsLogger() override = default;
+	CORE_API CMicrosoftLogger();
+	CORE_API ~CMicrosoftLogger() override = default;
 };
 
-typedef CWindowsLogger CPlatformLogger;
+typedef CMicrosoftLogger CPlatformLogger;

@@ -1,6 +1,6 @@
 #include "GoogleLogger.h"
 
-void CAndroidLogger::WriteLogLine(const CString& LogLine) const
+void CGoogleLogger::WriteLogLine(const CString& LogLine) const
 {
     Super::WriteLogLine(LogLine);
 

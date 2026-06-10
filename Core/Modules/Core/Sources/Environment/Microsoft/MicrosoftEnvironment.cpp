@@ -2,7 +2,7 @@
 
 #if PLATFORM_WINDOWS
 
-const char* CWindowsEnvironment::NewLine() const
+const char* CMicrosoftEnvironment::NewLine() const
 {
 	return "\r\n";
 }

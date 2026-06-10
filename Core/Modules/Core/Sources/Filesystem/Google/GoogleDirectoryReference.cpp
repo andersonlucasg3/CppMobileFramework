@@ -2,12 +2,12 @@
 
 #include <filesystem>
 
-void CAndroidDirectoryReference::UpdateExistance()
+void CGoogleDirectoryReference::UpdateExistance()
 {
     _bExists = std::filesystem::exists(*_path);
 }
 
-CAndroidDirectoryReference::CAndroidDirectoryReference(const CString& InPath) : Super(InPath)
+CGoogleDirectoryReference::CGoogleDirectoryReference(const CString& InPath) : Super(InPath)
 {
     //
 }

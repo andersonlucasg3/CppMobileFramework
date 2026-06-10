@@ -2,9 +2,9 @@
 
 #include "Filesystem/Android/AndroidPath.h"
 
-const CAndroidResources& GAndroidResources = static_cast<const CAndroidResources&>(GResources);
+const CGoogleResources& GAndroidResources = static_cast<const CGoogleResources&>(GResources);
 
-SFileRef CAndroidResources::GetResource(const CString& InResourceName) const
+SFileRef CGoogleResources::GetResource(const CString& InResourceName) const
 {
     return GPath.Combine({
         GAndroidPath.GetFilesPath(),

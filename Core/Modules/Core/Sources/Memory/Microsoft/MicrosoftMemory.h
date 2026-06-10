@@ -4,11 +4,11 @@
 
 #include "Memory/Memory.h"
 
-class CWindowsMemory : public CMemory
+class CMicrosoftMemory : public CMemory
 {
 public:
-	CWindowsMemory() = default;
-	~CWindowsMemory() override = default;
+	CMicrosoftMemory() = default;
+	~CMicrosoftMemory() override = default;
 
 	CORE_API void* Alloc(SizeT InSize) const override;
 	CORE_API void Free(void* InPtr) const override;
@@ -17,6 +17,6 @@ public:
 	CORE_API bool Equal(const void* Ptr1, SizeT Ptr1Size, const void* Ptr2, SizeT Ptr2Size) const override;
 };
 
-typedef CWindowsMemory CPlatformMemory;
+typedef CMicrosoftMemory CPlatformMemory;
 
 #endif // PLATFORM_WINDOWS

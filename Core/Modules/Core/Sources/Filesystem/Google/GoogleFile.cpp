@@ -2,13 +2,13 @@
 
 #include <filesystem>
 
-bool CAndroidFile::Create()
+bool CGoogleFile::Create()
 {
     FileHandle = fopen(*FilePath, "wb+");
 	return FileHandle != nullptr;
 }
 
-bool CAndroidFile::Open(EOpenMode Mode)
+bool CGoogleFile::Open(EOpenMode Mode)
 {
 	const char* ModeStr = nullptr;
 	switch (Mode)
@@ -24,18 +24,18 @@ bool CAndroidFile::Open(EOpenMode Mode)
 	return FileHandle != nullptr;
 }
 
-bool CAndroidFile::Delete()
+bool CGoogleFile::Delete()
 {
 	return std::filesystem::remove(*FilePath);
 }
 
-CAndroidFile::CAndroidFile(const CString& FilePath) :
+CGoogleFile::CGoogleFile(const CString& FilePath) :
 	Super(FilePath), FileHandle(nullptr)
 {
 	//
 }
 
-CAndroidFile::~CAndroidFile()
+CGoogleFile::~CGoogleFile()
 {
 	if (FileHandle != nullptr)
 	{
@@ -44,7 +44,7 @@ CAndroidFile::~CAndroidFile()
 	}
 }
 
-bool CAndroidFile::Write(const TArray<int8_t>& ByteArray)
+bool CGoogleFile::Write(const TArray<int8_t>& ByteArray)
 {
 	UInt64 BytesWritten = 0;
 	do
@@ -64,7 +64,7 @@ bool CAndroidFile::Write(const TArray<int8_t>& ByteArray)
 	return BytesWritten == ByteArray.Num();
 }
 
-bool CAndroidFile::Write(const void* Data, SizeT Size)
+bool CGoogleFile::Write(const void* Data, SizeT Size)
 {
 	UInt64 BytesWritten = 0;
 	do
@@ -84,7 +84,7 @@ bool CAndroidFile::Write(const void* Data, SizeT Size)
 	return BytesWritten == Size;
 }
 
-bool CAndroidFile::Read(TArray<int8_t>& OutByteArray)
+bool CGoogleFile::Read(TArray<int8_t>& OutByteArray)
 {
 	fseek(FileHandle, 0, SEEK_END);
 	UInt64 FileSize = ftell(FileHandle);
@@ -110,7 +110,7 @@ bool CAndroidFile::Read(TArray<int8_t>& OutByteArray)
 	return BytesRead == OutByteArray.Num();
 }
 
-bool CAndroidFile::Read(void*& OutData, UInt64& Size)
+bool CGoogleFile::Read(void*& OutData, UInt64& Size)
 {
 	assert(OutData != nullptr);
 
@@ -132,12 +132,12 @@ bool CAndroidFile::Read(void*& OutData, UInt64& Size)
 	return BytesRead == Size;
 }
 
-bool CAndroidFile::Flush()
+bool CGoogleFile::Flush()
 {
 	return fflush(FileHandle) > 0;
 }
 
-UInt64 CAndroidFile::GetSize() const
+UInt64 CGoogleFile::GetSize() const
 {
 	fseek(FileHandle, 0, SEEK_END);
 	UInt64 FileSize = ftell(FileHandle);

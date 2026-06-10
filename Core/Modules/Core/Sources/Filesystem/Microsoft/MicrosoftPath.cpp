@@ -9,17 +9,17 @@
 #include <Windows.h>
 #include <shlobj.h>
 
-CString CWindowsPath::FixPath(const CString& Path)
+CString CMicrosoftPath::FixPath(const CString& Path)
 {
     return Path.Replace('/', '\\');
 }
 
-char CWindowsPath::PathSeparator() const
+char CMicrosoftPath::PathSeparator() const
 {
     return '\\';
 }
 
-CString CWindowsPath::GetFullPath(const CString& InPath) const
+CString CMicrosoftPath::GetFullPath(const CString& InPath) const
 {
     CString Path = InPath;
 
@@ -45,7 +45,7 @@ CString CWindowsPath::GetFullPath(const CString& InPath) const
     return CString(FullPath, static_cast<UInt64>(Length));
 }
 
-CString CWindowsPath::GetPathRoot(const CString& InPath) const
+CString CMicrosoftPath::GetPathRoot(const CString& InPath) const
 {
     CString Path = InPath;
 
@@ -68,7 +68,7 @@ CString CWindowsPath::GetPathRoot(const CString& InPath) const
     return Path.SubString(0, 3);
 }
 
-CString CWindowsPath::Combine(const TArray<CString>& PathComponents) const
+CString CMicrosoftPath::Combine(const TArray<CString>& PathComponents) const
 {
     CString FullPath = FixPath(PathComponents[0]);
     for (UInt32 Index = 1; Index < PathComponents.Num(); ++Index)
@@ -79,7 +79,7 @@ CString CWindowsPath::Combine(const TArray<CString>& PathComponents) const
     return FullPath;
 }
 
-CString CWindowsPath::LastPathComponent(const CString& InPath) const
+CString CMicrosoftPath::LastPathComponent(const CString& InPath) const
 {
     Int64 LastSlashIndex = InPath.LastIndexOf('\\');
     if (LastSlashIndex == -1)
@@ -89,7 +89,7 @@ CString CWindowsPath::LastPathComponent(const CString& InPath) const
     return InPath.SubString(LastSlashIndex, InPath.Len());
 }
 
-CString CWindowsPath::RemoveLastPathComponent(const CString& InPath) const
+CString CMicrosoftPath::RemoveLastPathComponent(const CString& InPath) const
 {
     Int64 LastSlashIndex = InPath.LastIndexOf('\\');
     if (LastSlashIndex == -1)
@@ -99,7 +99,7 @@ CString CWindowsPath::RemoveLastPathComponent(const CString& InPath) const
     return InPath.SubString(0, LastSlashIndex);
 }
 
-const CString& CWindowsPath::CachesPath() const
+const CString& CMicrosoftPath::CachesPath() const
 {
     static CString CachesPath = []
     {

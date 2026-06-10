@@ -5,7 +5,7 @@
 #include "Filesystem/Path.h"
 #include "Process/Process.h"
 
-SFileRef CWindowsResources::GetResource(const CString& InResourceName) const
+SFileRef CMicrosoftResources::GetResource(const CString& InResourceName) const
 {
 	return GPath.Combine({
 		GProcess.GetContainerPath(),

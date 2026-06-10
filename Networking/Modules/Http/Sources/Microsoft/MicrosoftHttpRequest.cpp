@@ -11,7 +11,7 @@
 #include <winhttp.h>
 #include <winnt.h>
 
-CHttpRequestError CWindowsHttpRequest::GetError(CHttpRequestError::EHttpRequestError InError)
+CHttpRequestError CMicrosoftHttpRequest::GetError(CHttpRequestError::EHttpRequestError InError)
 {
     CHttpRequestError RequestError;
     RequestError.Error = InError;
@@ -43,7 +43,7 @@ void ReleaseHandles(const TArray<HINTERNET>& InHandles)
     }
 }
 
-void CWindowsHttpRequest::Process()
+void CMicrosoftHttpRequest::Process()
 {
     HINTERNET Session = WinHttpOpen(L"WinHTTP Request/1.0", WINHTTP_ACCESS_TYPE_DEFAULT_PROXY, WINHTTP_NO_PROXY_NAME, WINHTTP_NO_PROXY_BYPASS, 0);
 

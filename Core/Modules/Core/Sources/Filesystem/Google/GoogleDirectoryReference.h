@@ -2,7 +2,7 @@
 
 #include "Filesystem/DirectoryReference.h"
 
-class CAndroidDirectoryReference : public CDirectoryReference
+class CGoogleDirectoryReference : public CDirectoryReference
 {
     using Super = CDirectoryReference;
 
@@ -10,8 +10,8 @@ protected:
     CORE_API void UpdateExistance() override;
     
 public:
-    CORE_API explicit CAndroidDirectoryReference(const CString& InPath);
-    CORE_API ~CAndroidDirectoryReference() override = default;
+    CORE_API explicit CGoogleDirectoryReference(const CString& InPath);
+    CORE_API ~CGoogleDirectoryReference() override = default;
 };
 
-typedef CAndroidDirectoryReference CPlatformDirectoryReference;
+typedef CGoogleDirectoryReference CPlatformDirectoryReference;

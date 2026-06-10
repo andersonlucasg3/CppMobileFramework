@@ -6,13 +6,13 @@
 
 #include <filesystem>
 
-bool CWindowsFile::Create()
+bool CMicrosoftFile::Create()
 {
 	FileHandle = _fsopen(*FilePath, "wb+", _SH_DENYNO);
 	return FileHandle != nullptr;
 }
 
-bool CWindowsFile::Open(EOpenMode Mode)
+bool CMicrosoftFile::Open(EOpenMode Mode)
 {
 	const char* ModeStr = nullptr;
 	switch (Mode)
@@ -28,12 +28,12 @@ bool CWindowsFile::Open(EOpenMode Mode)
 	return FileHandle != nullptr;
 }
 
-bool CWindowsFile::Delete()
+bool CMicrosoftFile::Delete()
 {
 	return std::filesystem::remove(*FilePath);
 }
 
-bool CWindowsFile::Write(const TArray<int8_t>& ByteArray)
+bool CMicrosoftFile::Write(const TArray<int8_t>& ByteArray)
 {
 	UInt64 BytesWritten = 0;
 	do
@@ -53,7 +53,7 @@ bool CWindowsFile::Write(const TArray<int8_t>& ByteArray)
 	return BytesWritten == ByteArray.Num();
 }
 
-bool CWindowsFile::Write(const void* Data, SizeT Size)
+bool CMicrosoftFile::Write(const void* Data, SizeT Size)
 {
 	UInt64 BytesWritten = 0;
 	do
@@ -73,7 +73,7 @@ bool CWindowsFile::Write(const void* Data, SizeT Size)
 	return BytesWritten == Size;
 }
 
-bool CWindowsFile::Read(TArray<int8_t>& OutByteArray)
+bool CMicrosoftFile::Read(TArray<int8_t>& OutByteArray)
 {
 	fseek(FileHandle, 0, SEEK_END);
 	UInt64 FileSize = ftell(FileHandle);
@@ -98,7 +98,7 @@ bool CWindowsFile::Read(TArray<int8_t>& OutByteArray)
 	return BytesRead == OutByteArray.Num();
 }
 
-bool CWindowsFile::Read(void*& OutData, UInt64& Size)
+bool CMicrosoftFile::Read(void*& OutData, UInt64& Size)
 {
 	assert(OutData != nullptr);
 
@@ -124,12 +124,12 @@ bool CWindowsFile::Read(void*& OutData, UInt64& Size)
 	return BytesRead == Size;
 }
 
-bool CWindowsFile::Flush()
+bool CMicrosoftFile::Flush()
 {
 	return fflush(FileHandle) > 0;
 }
 
-UInt64 CWindowsFile::GetSize() const
+UInt64 CMicrosoftFile::GetSize() const
 {
 	fseek(FileHandle, 0, SEEK_END);
 	UInt64 FileSize = ftell(FileHandle);
@@ -138,12 +138,12 @@ UInt64 CWindowsFile::GetSize() const
 	return FileSize;
 }
 
-CWindowsFile::CWindowsFile(const CString& FilePath) : Super(FilePath), FileHandle(nullptr)
+CMicrosoftFile::CMicrosoftFile(const CString& FilePath) : Super(FilePath), FileHandle(nullptr)
 {
 	//
 }
 
-CWindowsFile::~CWindowsFile()
+CMicrosoftFile::~CMicrosoftFile()
 {
 	if (FileHandle != nullptr)
 	{
@@ -152,17 +152,17 @@ CWindowsFile::~CWindowsFile()
 	}
 }
 
-CWindowsFilePtr CWindowsFile::Create(const CString& FilePath)
+CMicrosoftFilePtr CMicrosoftFile::Create(const CString& FilePath)
 {
-	return MakeShareable(new CWindowsFile(FilePath));
+	return MakeShareable(new CMicrosoftFile(FilePath));
 }
 
-CWindowsFile* CWindowsFile::CreateUnsafe(const char* FilePath)
+CMicrosoftFile* CMicrosoftFile::CreateUnsafe(const char* FilePath)
 {
-	return new CWindowsFile(FilePath);
+	return new CMicrosoftFile(FilePath);
 }
 
-bool CWindowsFile::Exists(const CString& FilePath)
+bool CMicrosoftFile::Exists(const CString& FilePath)
 {
 	return std::filesystem::exists(*FilePath);
 }

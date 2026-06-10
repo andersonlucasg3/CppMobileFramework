@@ -6,17 +6,17 @@
 #include <processthreadsapi.h>
 #include <synchapi.h>
 
-void CWindowsThread::SetName(const CString& Name)
+void CMicrosoftThread::SetName(const CString& Name)
 {
 	this->_name = Name;
 }
 
-const CString& CWindowsThread::Name() const
+const CString& CMicrosoftThread::Name() const
 {
 	return _name;
 }
 
-void CWindowsThread::Join()
+void CMicrosoftThread::Join()
 {
 	if (Thread && Thread->joinable())
 	{
@@ -24,12 +24,12 @@ void CWindowsThread::Join()
 	}
 }
 
-void CWindowsThread::Sleep(UInt64 InTimeMilliseconds) const
+void CMicrosoftThread::Sleep(UInt64 InTimeMilliseconds) const
 {
 	::Sleep(InTimeMilliseconds);
 }
 
-void CWindowsThread::StartInternal(const TFunction<void(const CThreadWeakObjectPtr&)>& ThreadFunc)
+void CMicrosoftThread::StartInternal(const TFunction<void(const CThreadWeakObjectPtr&)>& ThreadFunc)
 {
 	if (!Thread)
 	{

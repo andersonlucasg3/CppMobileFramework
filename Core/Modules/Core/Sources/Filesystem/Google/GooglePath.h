@@ -2,14 +2,14 @@
 
 #include "Filesystem/Path.h"
 
-class CAndroidPath : public CPath
+class CGooglePath : public CPath
 {
     CString _filesPath;
     CString _cachesPath;
 
 public:
-    CORE_API CAndroidPath();
-    CORE_API ~CAndroidPath() override = default;
+    CORE_API CGooglePath();
+    CORE_API ~CGooglePath() override = default;
 
     CORE_API char PathSeparator() const override;
 
@@ -20,6 +20,6 @@ public:
     CORE_API const CString& GetFilesPath() const;
 };
 
-typedef CAndroidPath CPlatformPath;
+typedef CGooglePath CPlatformPath;
 
-extern const CAndroidPath& GAndroidPath;
+extern const CGooglePath& GAndroidPath;

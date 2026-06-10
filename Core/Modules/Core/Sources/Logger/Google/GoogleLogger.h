@@ -4,7 +4,7 @@
 
 class CString;
 
-class CAndroidLogger : public CLogger
+class CGoogleLogger : public CLogger
 {
     using Super = CLogger;
 
@@ -12,8 +12,8 @@ protected:
     CORE_API void WriteLogLine(const CString& LogLine) const override;
 
 public:
-    CORE_API CAndroidLogger() = default;
-    CORE_API ~CAndroidLogger() override = default;
+    CORE_API CGoogleLogger() = default;
+    CORE_API ~CGoogleLogger() override = default;
 };
 
-typedef CAndroidLogger CPlatformLogger;
+typedef CGoogleLogger CPlatformLogger;

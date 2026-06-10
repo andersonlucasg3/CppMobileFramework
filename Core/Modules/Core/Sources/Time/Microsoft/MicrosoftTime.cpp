@@ -2,7 +2,7 @@
 
 #include <Windows.h>
 
-Double CWindowsTime::GetTimeInSeconds() const
+Double CMicrosoftTime::GetTimeInSeconds() const
 {
 	LARGE_INTEGER Frequency;
 	QueryPerformanceFrequency(&Frequency);

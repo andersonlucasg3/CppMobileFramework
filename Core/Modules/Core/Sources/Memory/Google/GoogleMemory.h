@@ -2,11 +2,11 @@
 
 #include "Memory/Memory.h"
 
-class CAndroidMemory : public CMemory
+class CGoogleMemory : public CMemory
 {
 public:
-	CORE_API CAndroidMemory() = default;
-	CORE_API ~CAndroidMemory() override = default;
+	CORE_API CGoogleMemory() = default;
+	CORE_API ~CGoogleMemory() override = default;
 
 	CORE_API virtual void* Alloc(SizeT InSize) const override;
 	CORE_API virtual void Free(void* InPtr) const override;
@@ -15,4 +15,4 @@ public:
 	CORE_API virtual bool Equal(const void* Ptr1, SizeT Ptr1Size, const void* Ptr2, SizeT Ptr2Size) const override;
 };
 
-typedef CAndroidMemory CPlatformMemory;
+typedef CGoogleMemory CPlatformMemory;

@@ -4,16 +4,16 @@
 
 #include "Environment/Environment.h"
 
-class CWindowsEnvironment : public CEnvironment
+class CMicrosoftEnvironment : public CEnvironment
 {
 	using Super = CEnvironment;
 
 public:
-	CORE_API ~CWindowsEnvironment() override = default;
+	CORE_API ~CMicrosoftEnvironment() override = default;
 
 	CORE_API const char* NewLine() const override;
 };
 
-typedef CWindowsEnvironment CPlatformEnvironment;
+typedef CMicrosoftEnvironment CPlatformEnvironment;
 
 #endif

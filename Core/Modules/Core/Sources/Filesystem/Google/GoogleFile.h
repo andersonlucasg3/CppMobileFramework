@@ -2,7 +2,7 @@
 
 #include "Filesystem/File.h"
 
-class CAndroidFile : public CFile
+class CGoogleFile : public CFile
 {
     using Super = CFile;
 
@@ -14,8 +14,8 @@ protected:
 	CORE_API bool Delete() override;
 
 public:
-    CORE_API CAndroidFile(const CString& FilePath);
-	CORE_API ~CAndroidFile() override;
+    CORE_API CGoogleFile(const CString& FilePath);
+	CORE_API ~CGoogleFile() override;
 
     CORE_API bool Write(const TArray<int8_t>& ByteArray) override;
 	CORE_API bool Write(const void* Data, SizeT Size) override;
@@ -25,4 +25,4 @@ public:
 	CORE_API UInt64 GetSize() const override;
 };
 
-typedef CAndroidFile CPlatformFile;
+typedef CGoogleFile CPlatformFile;

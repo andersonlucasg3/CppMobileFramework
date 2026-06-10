@@ -2,7 +2,7 @@
 
 #include "Filesystem/Path.h"
 
-void CWindowsProcess::SetCommandLine(int argc, char* argv[])
+void CMicrosoftProcess::SetCommandLine(int argc, char* argv[])
 {
 	ExecutablePath = argv[0];
 	ExecutableContainerPath = GPath.RemoveLastPathComponent(ExecutablePath);
@@ -13,17 +13,17 @@ void CWindowsProcess::SetCommandLine(int argc, char* argv[])
 	}
 }
 
-const CString& CWindowsProcess::GetExecutablePath() const
+const CString& CMicrosoftProcess::GetExecutablePath() const
 {
 	return ExecutablePath;
 }
 
-const CString& CWindowsProcess::GetContainerPath() const
+const CString& CMicrosoftProcess::GetContainerPath() const
 {
 	return ExecutableContainerPath;
 }
 
-const TArray<CString>& CWindowsProcess::GetCommandLineArgs() const
+const TArray<CString>& CMicrosoftProcess::GetCommandLineArgs() const
 {
 	return CommandLineArgs;
 }

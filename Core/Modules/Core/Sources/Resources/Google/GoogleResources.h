@@ -2,14 +2,14 @@
 
 #include "Resources/Resources.h"
 
-class CAndroidResources : public CResources
+class CGoogleResources : public CResources
 {
 public:
-    CORE_API ~CAndroidResources() override = default;
+    CORE_API ~CGoogleResources() override = default;
 
     CORE_API SFileRef GetResource(const CString& InResourceName) const override;
 };
 
-typedef CAndroidResources CPlatformResources;
+typedef CGoogleResources CPlatformResources;
 
-extern const CAndroidResources& GAndroidResources;
+extern const CGoogleResources& GAndroidResources;

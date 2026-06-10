@@ -1,6 +1,6 @@
 #include "GoogleEnvironment.h"
 
-const char* CAndroidEnvironment::NewLine() const
+const char* CGoogleEnvironment::NewLine() const
 {
     return "\n";
 }

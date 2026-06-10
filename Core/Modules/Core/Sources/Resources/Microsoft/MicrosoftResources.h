@@ -4,14 +4,14 @@
 
 #include "Resources/Resources.h"
 
-class CWindowsResources : public CResources
+class CMicrosoftResources : public CResources
 {
 public:
-	CORE_API ~CWindowsResources() override = default;
+	CORE_API ~CMicrosoftResources() override = default;
 	
 	CORE_API SFileRef GetResource(const CString& InResourceName) const override;
 };
 
-typedef CWindowsResources CPlatformResources;
+typedef CMicrosoftResources CPlatformResources;
 
 #endif // PLATFORM_WINDOWS

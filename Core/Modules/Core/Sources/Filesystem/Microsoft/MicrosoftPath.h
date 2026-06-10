@@ -4,12 +4,12 @@
 
 #include "Filesystem/Path.h"
 
-class CWindowsPath : public CPath
+class CMicrosoftPath : public CPath
 {
 	CORE_API static CString FixPath(const CString& Path);
 
 public:
-	CORE_API ~CWindowsPath() override = default;
+	CORE_API ~CMicrosoftPath() override = default;
 
 	CORE_API char PathSeparator() const override;
 
@@ -24,6 +24,6 @@ public:
 	CORE_API const CString& CachesPath() const override;
 };
 
-typedef CWindowsPath CPlatformPath;
+typedef CMicrosoftPath CPlatformPath;
 
 #endif // PLATFORM_WINDOWS

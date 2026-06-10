@@ -4,11 +4,11 @@
 
 #include "Filesystem/File.h"
 
-class CWindowsFile;
-using CWindowsFilePtr = TSharedPtr<CWindowsFile>;
-using CWindowsFileWeakPtr = TWeakPtr<CWindowsFile>;
+class CMicrosoftFile;
+using CMicrosoftFilePtr = TSharedPtr<CMicrosoftFile>;
+using CMicrosoftFileWeakPtr = TWeakPtr<CMicrosoftFile>;
 
-class CWindowsFile : public CFile
+class CMicrosoftFile : public CFile
 {
 	using Super = CFile;
 
@@ -26,14 +26,14 @@ protected:
 	CORE_API UInt64 GetSize() const override;
 
 public:
-	CORE_API CWindowsFile(const CString& FilePath);
-	CORE_API ~CWindowsFile() override;
+	CORE_API CMicrosoftFile(const CString& FilePath);
+	CORE_API ~CMicrosoftFile() override;
 
-	CORE_API static CWindowsFilePtr Create(const CString& FilePath);
-	CORE_API static CWindowsFile* CreateUnsafe(const char* FilePath);
+	CORE_API static CMicrosoftFilePtr Create(const CString& FilePath);
+	CORE_API static CMicrosoftFile* CreateUnsafe(const char* FilePath);
 	CORE_API static bool Exists(const CString& FilePath);
 };
 
-typedef CWindowsFile CPlatformFile;
+typedef CMicrosoftFile CPlatformFile;
 
 #endif // PLATFORM_WINDOWS
