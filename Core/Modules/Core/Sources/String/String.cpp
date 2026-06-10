@@ -224,7 +224,7 @@ CString CString::Replace(const char* OldCStr, const char* NewCStr) const
 
             Builder += NewCStr;
             LastCopyed = Index + OldStrLen;
-            Index = LastCopyed;
+            Index = LastCopyed - 1;
         }
     }
 
