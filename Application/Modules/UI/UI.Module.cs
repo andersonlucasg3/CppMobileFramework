@@ -14,6 +14,13 @@ public class UIModule : AModuleDefinition
             "Core"
         );
 
+        AddLinkWithLibrary(
+            ETargetPlatform.Windows,
+            "user32.lib",
+            "gdi32.lib",
+            "comctl32.lib"
+        );
+
         PlatformSpecifics.GetIOS().AddFrameworkDependencies(
             "UIKit"
         );

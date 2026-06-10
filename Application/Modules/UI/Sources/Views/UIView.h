@@ -47,15 +47,15 @@ protected:
 
     CUIView(CNativeViewController* Owner);
 
-    void* GetNativePointer() const;
+public:
+    UI_API void* GetNativePointer() const;
 
 protected:
     ARRAYPROPERTY(CUIView, _subviews);
     CUIViewWeakObjectPtr _superview;
-
-private:
     TSharedPtr<CNativeInstance> _nativeInstance;
 
     friend class CUIViewController;
+    friend class CUIWindow;
     friend class CUIStackView;
 };
