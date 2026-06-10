@@ -19,6 +19,7 @@ CUIView::CUIView()
     EnsureClasses();
     SRectF B = CUIScreen::MainScreen()->Bounds();
     HWND h = CreateWindowExW(0, L"CppUIView", L"", WS_CHILD|WS_VISIBLE, 0,0,(int)B.Size.Width,(int)B.Size.Height, NULL,NULL,GetModuleHandle(NULL),NULL);
+    GLogger.Log("CUIView::CUIView() hwnd={}", (void*)h);
     _nativeInstance = MakeShared<CNativeInstance>(h);
 }
 
@@ -26,6 +27,7 @@ CUIView::CUIView(const SRectF& R)
 {
     EnsureClasses();
     HWND h = CreateWindowExW(0, L"CppUIView", L"", WS_CHILD|WS_VISIBLE, (int)R.Origin.X,(int)R.Origin.Y,(int)R.Size.Width,(int)R.Size.Height, NULL,NULL,GetModuleHandle(NULL),NULL);
+    GLogger.Log("CUIView::CUIView(R) hwnd={}", (void*)h);
     _nativeInstance = MakeShared<CNativeInstance>(h);
 }
 

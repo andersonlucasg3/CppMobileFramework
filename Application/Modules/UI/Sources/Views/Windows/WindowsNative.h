@@ -13,4 +13,4 @@ private:
     HWND _hWnd;
 };
 
-inline HWND ViewHWND(const CUIView* V) { return ((CNativeInstance*)V->GetNativePointer())->GetHWND(); }
+inline HWND ViewHWND(const CUIView* V) { return (HWND)V->GetNativePointer(); }

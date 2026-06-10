@@ -3,6 +3,7 @@
 #include "SmartPointer/MakeAndCasts.h"
 #include "Devices/UIScreen.h"
 #include "Controllers/UIViewController.h"
+#include "Logger/Logger.h"
 
 static LRESULT CALLBACK MainWndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
