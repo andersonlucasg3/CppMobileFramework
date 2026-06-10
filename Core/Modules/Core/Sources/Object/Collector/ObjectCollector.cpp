@@ -112,7 +112,7 @@ void CObjectCollector::RemoveObjectLink(CObjectLink* Link)
 {
 	if (Link == nullptr) return;
 
-	SScopeLock Lock(_objectsCriticalSection, true);
+	SScopeLock Lock(_objectsCriticalSection);
 	
 	CObject* Object = Link->Object();
 	
@@ -164,7 +164,7 @@ void CObjectCollector::RemoveOnObjectCollectedListener(CObject* Object, SObjectC
 
 bool CObjectCollector::HasLinks(CObject* Obj) const
 {
-	SScopeLock Lock(_objectsCriticalSection, true);
+	SScopeLock Lock(_objectsCriticalSection);
 
 	if (TArray<CObjectLink*>* LinksArray = _objectLinksMap.Find(Obj))
 	{
@@ -176,7 +176,7 @@ bool CObjectCollector::HasLinks(CObject* Obj) const
 
 void CObjectCollector::WatchObject(CObject *Obj)
 {
-	SScopeLock Lock(_objectsCriticalSection, true);
+	SScopeLock Lock(_objectsCriticalSection);
 
 	_globalObjects.Add(Obj);
 
@@ -190,7 +190,7 @@ void CObjectCollector::WatchObject(CObject *Obj)
 
 void CObjectCollector::UnWatchObject(CObject *Obj)
 {
-	SScopeLock Lock(_objectsCriticalSection, true);
+	SScopeLock Lock(_objectsCriticalSection);
 
 	_globalObjects.Remove(Obj);
 
@@ -204,7 +204,7 @@ void CObjectCollector::UnWatchObject(CObject *Obj)
 
 void CObjectCollector::AddToRoot(CObject* Obj)
 {
-	SScopeLock Lock(_objectsCriticalSection, true);
+	SScopeLock Lock(_objectsCriticalSection);
 
 	_rootedObjects.Add(Obj);
 
@@ -216,7 +216,7 @@ void CObjectCollector::AddToRoot(CObject* Obj)
 
 void CObjectCollector::RemoveFromRoot(CObject* Obj)
 {
-	SScopeLock Lock(_objectsCriticalSection, true);
+	SScopeLock Lock(_objectsCriticalSection);
 
 	_rootedObjects.Remove(Obj);
 
@@ -228,14 +228,14 @@ void CObjectCollector::RemoveFromRoot(CObject* Obj)
 
 SizeT CObjectCollector::AliveObjectCount() const
 {
-	SScopeLock Lock(_objectsCriticalSection, true);
+	SScopeLock Lock(_objectsCriticalSection);
 
 	return _globalObjects.Num();
 }
 
 void CObjectCollector::SetQueuedForDestruction(CObject* Obj, bool bEnqueue)
 {
-	SScopeLock Lock(_destructionQueueCriticalSection, true);
+	SScopeLock Lock(_destructionQueueCriticalSection);
 
 	if (bEnqueue)
 	{
@@ -290,7 +290,7 @@ void CObjectCollector::CollectGarbage()
 
 void CObjectCollector::DestroyQueued()
 {
-	SScopeLock DestructionLock(_destructionQueueCriticalSection, true);
+	SScopeLock DestructionLock(_destructionQueueCriticalSection);
 
 	for (CObject* Object : _destructionQueue)
 	{
@@ -302,7 +302,7 @@ void CObjectCollector::DestroyQueued()
 
 void CObjectCollector::DestroyObject(CObject* Obj)
 {
-	SScopeLock ObjectsLock(_objectsCriticalSection, true);
+	SScopeLock ObjectsLock(_objectsCriticalSection);
 
 	if (TArray<CObjectLink*>* LinksPtr = _objectLinksMap.Find(Obj))
 	{

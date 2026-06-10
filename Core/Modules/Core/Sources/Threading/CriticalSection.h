@@ -12,5 +12,5 @@ struct SCriticalSection
     CORE_API virtual void Unlock() const;
 
 private:
-    mutable std::mutex _mutex;
+    mutable std::recursive_mutex _mutex;
 };

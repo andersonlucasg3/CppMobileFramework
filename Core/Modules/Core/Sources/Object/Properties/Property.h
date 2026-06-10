@@ -72,14 +72,14 @@ namespace Objects::Properties
 
 		inline TObject* Object() const
 		{
-			SScopeLock Lock(_criticalSection, true);
+			SScopeLock Lock(_criticalSection);
 
 			return _object;
 		}
 
 		inline void ReleaseLinks() override
 		{
-			SScopeLock Lock(_criticalSection, true);
+			SScopeLock Lock(_criticalSection);
 
 			GObjectCollector.RemoveObjectLink(_link);
 
@@ -89,7 +89,7 @@ namespace Objects::Properties
 
 		inline void EnumerateLinks(const TFunction<void (CObjectLink*)>& InFunc) const override
 		{
-			SScopeLock Lock(_criticalSection, true);
+			SScopeLock Lock(_criticalSection);
 
 			if (_link != nullptr)
 			{
