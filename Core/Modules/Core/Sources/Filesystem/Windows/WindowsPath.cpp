@@ -23,12 +23,12 @@ CString CWindowsPath::GetFullPath(const CString& InPath) const
 {
     CString Path = InPath;
 
-    if (Path.IsEmpty() || Path.Len() < 2) 
+    if (Path.IsEmpty())
     {
         return Path;
     }
 
-    if (Path[1] != ':')
+    if (Path.Len() < 2 || Path[1] != ':')
     {
         const CString& WorkingDirectory = GProcess.GetContainerPath();
         Path = GPath.Combine({ WorkingDirectory, InPath });

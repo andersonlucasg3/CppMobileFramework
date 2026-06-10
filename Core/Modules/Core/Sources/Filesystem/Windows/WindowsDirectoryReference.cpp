@@ -5,6 +5,7 @@
 #include "Filesystem/Path.h"
 
 #include <Windows.h>
+#include <filesystem>
 
 void CWindowsDirectoryReference::UpdateExistance()
 {
@@ -21,7 +22,18 @@ CWindowsDirectoryReference::CWindowsDirectoryReference(const CString& InPath) : 
 
 bool CWindowsDirectoryReference::Create(bool InCreateIntermediates)
 {
-	return CreateDirectory(*_path, NULL);
+    if (InCreateIntermediates)
+    {
+        // SHCreateDirectoryEx or recursive CreateDirectory
+        std::filesystem::create_directories(*_path);
+    }
+    else if (!CreateDirectory(*_path, NULL))
+    {
+        return false;
+    }
+
+    UpdateExistance();
+    return _bExists;
 }
 
 bool CWindowsDirectoryReference::Delete()
