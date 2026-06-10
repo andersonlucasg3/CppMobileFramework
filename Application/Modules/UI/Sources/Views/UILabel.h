@@ -31,6 +31,9 @@ public:
     UI_API void SetTextAlignment(ETextAlignment InAlignment);
     UI_API ETextAlignment TextAlignment() const;
 
+protected:
+    UI_API void OnAddedToSuperview() override;
+
 private:
     CString _text;
     ETextAlignment _alignment = ETextAlignment::Left;

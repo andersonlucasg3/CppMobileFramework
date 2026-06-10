@@ -20,14 +20,19 @@ public:
         if (V)
         {
             V->SetBackgroundColor();
+
+            // Add to view hierarchy FIRST so HWND gets a parent
             V->AddSubview(Label);
 
+            // Then configure
             SRectF ViewFrame = V->Frame();
             Float LabelW = 200.0f;
             Float LabelH = 40.0f;
             Float X = (ViewFrame.Size.Width - LabelW) / 2.0f;
             Float Y = (ViewFrame.Size.Height - LabelH) / 2.0f;
             Label->SetFrame(SRectF(X, Y, LabelW, LabelH));
+            Label->SetText("Hello World");
+            Label->SetTextAlignment(ETextAlignment::Center);
         }
     }
 };

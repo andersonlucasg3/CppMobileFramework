@@ -31,6 +31,8 @@ public:
     
     UI_API CUIView* Superview() const;
 
+    UI_API virtual void OnAddedToSuperview() {}
+
     template<typename TNativeView>
     TNativeView* NativeInstance() const
     {
