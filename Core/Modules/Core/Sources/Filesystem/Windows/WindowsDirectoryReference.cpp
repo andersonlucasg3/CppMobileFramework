@@ -38,7 +38,13 @@ bool CWindowsDirectoryReference::Create(bool InCreateIntermediates)
 
 bool CWindowsDirectoryReference::Delete()
 {
-	return RemoveDirectory(*_path);
+    if (!RemoveDirectory(*_path))
+    {
+        return false;
+    }
+
+    UpdateExistance();
+    return true;
 }
 
 SDirectoryRef CWindowsDirectoryReference::Combine(const CString& InComponent) const
