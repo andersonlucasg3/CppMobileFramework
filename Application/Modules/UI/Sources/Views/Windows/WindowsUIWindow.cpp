@@ -25,6 +25,8 @@ CUIWindow::CUIWindow()
         WS_OVERLAPPEDWINDOW|WS_VISIBLE, CW_USEDEFAULT,0,(int)B.Size.Width,(int)B.Size.Height,
         NULL,NULL,GetModuleHandle(NULL),NULL);
     _nativeInstance = MakeShared<CNativeInstance>(h);
+    ShowWindow(h, SW_SHOW);
+    UpdateWindow(h);
 }
 
 CUIWindow::CUIWindow(const SRectF& R)
