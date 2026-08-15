@@ -16,6 +16,6 @@ public class ExampleProject : AProjectDefinition
         AddProjectDependency<CoreProject>();
         AddProjectDependency<ApplicationProject>();
 
-        AddModule<HelloWorldModule>();
+        AddModule<UIPlaygroundModule>();
     }
 }

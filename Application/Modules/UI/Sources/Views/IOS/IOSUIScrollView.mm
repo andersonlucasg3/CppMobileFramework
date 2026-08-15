@@ -20,6 +20,15 @@ CUIScrollView::CUIScrollView(const SRectF& ScrollViewRect)
     
 }
 
+void CUIScrollView::OnAddedToSuperview() {}
+
+SPointF CUIScrollView::ContentOffset() const { return _contentOffset; }
+void CUIScrollView::SetContentOffset(SPointF O) { _contentOffset = O; }
+SSizeF CUIScrollView::ContentSize() const { return _contentSize; }
+void CUIScrollView::SetContentSize(SSizeF S) { _contentSize = S; }
+bool CUIScrollView::OnTouchEvent(EUITouchPhase, SPointF) { return false; }
+void CUIScrollView::RepositionChildren() {}
+
 @implementation IOSScrollView
 {
     @public CUIScrollViewWeakObjectPtr _weakOwner;

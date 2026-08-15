@@ -23,6 +23,12 @@ SRectF CUIScreen::Bounds() const
     return SRectF(0, 0, (Float)w, (Float)h);
 }
 
+Float CUIScreen::Density() const
+{
+    Float density = (Float)GetDpiForSystem() / 96.0f;
+    return density > 0.0f ? density : 1.0f;
+}
+
 CNativeScreen& CUIScreen::NativeScreen() const
 {
     return *_nativeScreen;

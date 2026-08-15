@@ -4,6 +4,7 @@
 
 #include "Views/UIView.h"
 #include "Graphics/Rects.h"
+#include "Graphics/Colors.h"
 
 FORWARD_DECLARE_OBJECT(UILabel);
 
@@ -31,10 +32,18 @@ public:
     UI_API void SetTextAlignment(ETextAlignment InAlignment);
     UI_API ETextAlignment TextAlignment() const;
 
+    UI_API void SetTextColor(const SColorF& Color);
+    UI_API SColorF TextColor() const;
+
+    UI_API void SetTextSize(Float PixelSize);
+    UI_API Float TextSize() const;
+
 protected:
     UI_API void OnAddedToSuperview() override;
 
 private:
     CString _text;
     ETextAlignment _alignment = ETextAlignment::Left;
+    SColorF _textColor;
+    Float _textSize = 0.0f;
 };

@@ -1,6 +1,6 @@
 #include "GoogleResources.h"
 
-#include "Filesystem/Android/AndroidPath.h"
+#include "Filesystem/Google/GooglePath.h"
 
 const CGoogleResources& GAndroidResources = static_cast<const CGoogleResources&>(GResources);
 

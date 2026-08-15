@@ -35,6 +35,11 @@ void CUIStackView::RemoveArrangedSubview(CUIView* Subview)
     [NativeInstance<IOSStackView>() removeArrangedSubview:Subview->NativeInstance<IOSView>()];
 }
 
+void CUIStackView::SetSpacing(Float S) { _spacing = S; }
+Float CUIStackView::Spacing() const { return _spacing; }
+void CUIStackView::OnAddedToSuperview() {}
+void CUIStackView::LayoutArrangedSubviews() {}
+
 @implementation IOSStackView
 {
     @public CUIStackViewWeakObjectPtr _weakOwner;

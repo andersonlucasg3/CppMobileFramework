@@ -18,6 +18,12 @@ SRectF CUIScreen::Bounds() const
     return ToRectF([NativeScreen() bounds]);
 }
 
+Float CUIScreen::Density() const
+{
+    CGFloat scale = [UIScreen mainScreen].scale;
+    return scale > 0.0f ? (Float)scale : 1.0f;
+}
+
 CNativeScreen& CUIScreen::NativeScreen() const
 {
     return *_nativeScreen;

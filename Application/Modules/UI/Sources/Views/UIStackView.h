@@ -19,4 +19,14 @@ public:
 
     UI_API void AddArrangedSubview(CUIView* Subview);
     UI_API void RemoveArrangedSubview(CUIView* Subview);
+
+    UI_API void SetSpacing(Float Spacing);
+    UI_API Float Spacing() const;
+
+protected:
+    UI_API void OnAddedToSuperview() override;
+
+private:
+    Float _spacing = 8.0f;
+    UI_API void LayoutArrangedSubviews();
 };

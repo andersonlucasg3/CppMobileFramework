@@ -41,10 +41,32 @@ void CUIView::RemoveFromSuperview()
     [NativeInstance<IOSView>() removeFromSuperview];
 }
 
+void CUIView::OnAddedToSuperview()
+{
+    // No-op on iOS — UIKit handles view hierarchy natively
+}
+
 void CUIView::SetBackgroundColor()
 {
     // TODO: pass the CUIColor
     [NativeInstance<IOSView>() setBackgroundColor:[UIColor grayColor]];
+}
+
+void CUIView::SetBackgroundColor(const SColorF& Color)
+{
+    UIColor* c = [UIColor colorWithRed:(CGFloat)Color.R() green:(CGFloat)Color.G()
+                                  blue:(CGFloat)Color.B() alpha:(CGFloat)Color.A()];
+    [NativeInstance<IOSView>() setBackgroundColor:c];
+}
+
+SColorF CUIView::BackgroundColor() const
+{
+    return SColorF::Gray(); // Simplified
+}
+
+bool CUIView::OnTouchEvent(EUITouchPhase /*Phase*/, SPointF /*Point*/)
+{
+    return false;
 }
 
 SRectF CUIView::Frame() const

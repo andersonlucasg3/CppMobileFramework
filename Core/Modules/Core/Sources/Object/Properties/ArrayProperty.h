@@ -71,6 +71,12 @@ namespace Objects::Properties
             return _objects[Index];
         }
 
+        inline SizeT Num() const
+        {
+            SScopeLock Lock(_criticalSection);
+            return _objects.Num();
+        }
+
     private:
         TArray<TObject*> _objects;
 

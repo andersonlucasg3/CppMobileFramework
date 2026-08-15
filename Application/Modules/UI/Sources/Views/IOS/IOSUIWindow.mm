@@ -28,6 +28,16 @@ void CUIWindow::SetRootViewController(CUIViewController* InRootViewController)
     [NativeInstance<IOSWindow>() setRootViewController:InRootViewController->NativeInstance<IOSViewController>()];
 }
 
+void CUIWindow::Render()
+{
+    // No-op on IOS — native UIKit views draw themselves.
+}
+
+CUIView* CUIWindow::HitTest(SPointF /*Point*/)
+{
+    return nullptr; // Stub on IOS
+}
+
 @implementation IOSWindow
 {
     @public CUIWindowWeakObjectPtr _weakOwner;

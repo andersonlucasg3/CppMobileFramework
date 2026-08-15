@@ -1,5 +1,6 @@
 #include "GoogleFile.h"
 
+#include <cassert>
 #include <filesystem>
 
 bool CGoogleFile::Create()

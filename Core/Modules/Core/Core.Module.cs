@@ -20,5 +20,11 @@ public class CoreModule : AModuleDefinition
             "shell32.lib",
             "ole32.lib"
         );
+
+        AddCompilerDefinition(
+            ETargetPlatform.Android,
+            "ANDROID_APPLICATION_PACKAGE",
+            "\"com.cppmobileframework.helloworld\""
+        );
     }
 }
